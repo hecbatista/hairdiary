@@ -1,12 +1,22 @@
 import { Text, View, StyleSheet, Button } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import HomeScreen from './screens/HomeScreen';
+import AddEntryScreen from './screens/AddEntryScreen';
+import ProfileScreen from './screens/ProfileScreen';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hair Diary</Text>
-      <Text>Track your routines, products, and results</Text>
-      <Button title="Add Entry" onPress={() => {}} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen}/>
+        <Stack.Screen name="AddEntry" component={AddEntryScreen} options={{ title: "Add Entry" }}/>
+        <Stack.Screen name="Profile" component={ProfileScreen}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
 
