@@ -17,6 +17,9 @@ An app designed to empower people embrace their hair care in an easy and visual 
 - expo-splash-screen
 - AsyncStorage
 
+## 📸 Preview
+![Home Screen](screenshots/homescreenPreview.png)
+
 ## 🥅 Goals
 - Develop Front-End Skills
 - Develop Back-End Skills
