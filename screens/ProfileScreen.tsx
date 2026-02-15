@@ -12,7 +12,7 @@ const MOCK_PROFILE: Profile = {
     journey: "Growing my curls and NO FRIZZ!"
 }
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
     const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
     const [loading, setLoading] = useState(true);
 
@@ -121,6 +121,7 @@ export default function ProfileScreen() {
             />
 
             <Button title="Save Profile" onPress={handleSave} />
+            <Button title="Back" onPress={() => navigation.navigate("Home")}></Button>
 
         </View>
     )
