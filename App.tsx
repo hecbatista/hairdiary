@@ -35,7 +35,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="AddEntry" component={AddEntryScreen} options={{ title: "Add Entry" }}/>
+        <Stack.Screen name="AddEntry" component={AddEntryScreen}/>
         <Stack.Screen name="Profile" component={ProfileScreen}/>
       </Stack.Navigator>
     </NavigationContainer>

@@ -17,8 +17,55 @@ An app designed to empower people embrace their hair care in an easy and visual 
 - expo-splash-screen
 - AsyncStorage
 
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed.
+
+### Required Software
+
+- **Node.js** (v14.0 or higher)
+- **npm** (v6.0 or higher) or **yarn**
+- **Git**
+
+## Installation
+
+Once you have the prerequisites installed, follow these steps:
+
+1. **Clone the repository**
+```
+bash
+git clone https://github.com/hecbatista/hairdiary.git
+cd hairdiary
+```
+
+2. **Install dependencies**
+```
+bash
+npm install
+```
+or
+```
+bash
+yarn install
+```
+
+3. **Start the development server**
+```
+bash
+npm start
+```
+or
+```
+bash
+npx expo start
+```
+
+
 ## 📸 Preview
-![Home Screen](screenshots/homescreenPreview.png)
+<p align=center>
+    <img src="screenshots/homescreen.png" width=250 />
+    <img src="screenshots/addentryscreen.png" width=250 />
+</p>
 
 ## 🥅 Goals
 - Develop Front-End Skills
