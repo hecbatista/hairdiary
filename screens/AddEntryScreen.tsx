@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TextInput, Button, Pressable, ScrollView, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useState } from "react";
 import { Entry, ENTRY_TYPES, EntryType } from "../type";
-import { Picker } from "@react-native-picker/picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../colors";
 import Entypo from '@expo/vector-icons/Entypo';
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     title: { flex: 1, fontSize: 28, fontFamily: "Poppins-SemiBold", textAlign: "center" },
     subtitle: { fontSize: 24, fontFamily: "Poppins-SemiBold", textAlign: "center", marginBottom: 16 },
     formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24 },
-    label: { fontSize: 16, marginBottom: 8 },
+    label: { fontSize: 16, marginBottom: 8, fontFamily: "Poppins-Regular" },
     dropdownButton: {
         backgroundColor: "white",
         borderRadius: 12,

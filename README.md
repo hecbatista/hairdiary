@@ -65,6 +65,7 @@ npx expo start
 <p align=center>
     <img src="screenshots/homescreen.png" width=250 />
     <img src="screenshots/addentryscreen.png" width=250 />
+    <img src="screenshots/profilescreen.png" width=250 />
 </p>
 
 ## 🥅 Goals
@@ -72,6 +73,9 @@ npx expo start
 - Develop Back-End Skills
 - Improve upon code design and documentation
 - Learn new technologies
+
+## 🚧 Possible Features
+- Good Hair Day Posts w/ used hair products!
 
 ## 🧑🏽‍💻 About me
 Built by Hector Batista (a fellow curly head!) - Computer Science & Business Administration

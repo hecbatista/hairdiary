@@ -4,13 +4,11 @@ import type { Profile } from "../type";
 import { loadProfile, saveProfile } from "../storage/profileStage";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "../colors";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const DEFAULT_PROFILE: Profile = { name: "", journey: "", photoUri: undefined };
-
-const MOCK_PROFILE: Profile = {
-    name: "Hector",
-    journey: "Growing my curls and NO FRIZZ!"
-}
 
 export default function ProfileScreen({ navigation }: any) {
     const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
@@ -39,6 +37,7 @@ export default function ProfileScreen({ navigation }: any) {
                 photoUri: profile.photoUri,
             });
             Alert.alert("Saved", "Your profile was updated.");
+            navigation.goBack();
         } catch {
             Alert.alert("Error", "Could not save your profile.");
         }
@@ -84,58 +83,93 @@ export default function ProfileScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Profile</Text>
+            <LinearGradient
+                colors={["#AD948B", "#EAD9D1"]}
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 140,
+                }}/>
+            <View style={styles.headerContainer}>
+                <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Entypo name="chevron-left" size={30} color={Colors.text} />
+                </Pressable>
+                <Text style={styles.title}>Profile</Text>
+            </View>
 
-            <Pressable style={styles.avatarWrap} onPress={pickProfilePhoto}>
-                {profile.photoUri ? (
-                    <Image source={{ uri: profile.photoUri }} style={styles.avatar} />
-                ) : (
-                    <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                        <Text style={styles.avatarText}>Add Photo</Text>
+            <View style={styles.formContainer}>
+                <Pressable style={styles.avatarWrap} onPress={pickProfilePhoto}>
+                    {profile.photoUri ? (
+                        <Image source={{ uri: profile.photoUri }} style={styles.avatar} />
+                    ) : (
+                        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                            <Text style={styles.avatarText}>Add Photo</Text>
+                        </View>
+                    )}
+                    <View style={styles.editBadgeOuter}>
+                        <View style={styles.editBadgeInner}>
+                            <Entypo name="pencil" size={18} color="white" />
+                        </View>
                     </View>
-                )}
-            </Pressable>
+                </Pressable>
 
-            {profile.photoUri && (
-                <View style={{ marginBottom: 12 }}>
-                    <Button title="Remove Photo" onPress={() => updateField("photoUri", undefined)} />
-                </View>
-            )}
+                
 
 
-            <Text style={styles.label}>Name</Text>
-            <TextInput
-                value={profile.name}
-                onChangeText={(t) => updateField("name", t)}
-                placeholder="Your name"
-                style={styles.input}
-            />
+                <Text style={styles.label}>Name</Text>
+                <TextInput
+                    value={profile.name}
+                    onChangeText={(t) => updateField("name", t)}
+                    placeholder="Your name"
+                    style={styles.smallInput}
+                />
 
-            <Text style={styles.label}>Hair Journey</Text>
-            <TextInput
-                value={profile.journey}
-                onChangeText={(t) => updateField("journey", t)}
-                placeholder="What are you goals? (growth, health, curls, etc.)"
-                style={[styles.input, styles.textArea]}
-                multiline
-            />
+                <Text style={styles.label}>Hair Journey</Text>
+                <TextInput
+                    value={profile.journey}
+                    onChangeText={(t) => updateField("journey", t)}
+                    placeholder="What are you goals? (growth, health, curls, etc.)"
+                    style={[styles.input, styles.textArea]}
+                    multiline
+                />
 
-            <Button title="Save Profile" onPress={handleSave} />
-            <Button title="Back" onPress={() => navigation.navigate("Home")}></Button>
+                <Pressable style={styles.submitButton} onPress={handleSave}>
+                    <Text style={styles.submitButtonText}>Save Profile</Text>
+                </Pressable>
+            </View>
+            
 
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 24, paddingTop: 50 },
-    title: { fontSize: 28, fontWeight: "700", marginBottom: 16 },
-    label: { fontSize: 16, fontWeight: "600", marginBottom: 6, marginTop: 12 },
+    container: {flex: 1, padding: 24, paddingTop: 75, backgroundColor: Colors.background},
+    headerContainer: {flexDirection: "row", justifyContent: "space-between", marginBottom: 20, alignItems: "center"},
+    backButton: {width: 50, height: 50, justifyContent: "center", alignItems: "center"},
+    title: { flex: 1, fontSize: 28, fontFamily: "Poppins-SemiBold", textAlign: "center" },
+    formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24 },
+    label: { fontSize: 16, marginBottom: 8, fontFamily: "Poppins-Regular" },
+    smallInput: {
+        backgroundColor: "white",
+        borderRadius: 12,
+        padding: 16,
+        textAlignVertical: "top",
+        marginBottom: 24,
+        fontFamily: "Poppins-Regular",
+        fontSize: 16
+    },
     input: {
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 12,
-        fontSize: 16,
+        backgroundColor: "white",
+        borderRadius: 12,
+        padding: 16,
+        minHeight: 120,
+        textAlignVertical: "top",
+        marginBottom: 24,
+        fontFamily: "Poppins-Regular",
+        fontSize: 16
     },
     textArea: {
         minHeight: 120,
@@ -144,6 +178,8 @@ const styles = StyleSheet.create({
     avatarWrap: {
         alignSelf: "center",
         marginBottom: 16,
+        position: "relative",
+        overflow: "hidden"
     },
     avatar: {
         width: 120,
@@ -158,5 +194,36 @@ const styles = StyleSheet.create({
     avatarText: {
         fontSize: 14,
         opacity: 0.7,
+    },
+    submitButton: {
+        backgroundColor: "#1E1E1E",
+        borderRadius: 12,
+        paddingVertical: 16,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    submitButtonText: {
+        color: "white",
+        fontSize: 18,
+        fontFamily: "Poppins-SemiBold"
+    },
+    editBadgeOuter: {
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: 38,
+        height: 38,
+        backgroundColor: "#AD948B",
+        borderRadius: 21,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    editBadgeInner: {
+        width: 32,
+        height: 32,
+        borderRadius: 18,
+        backgroundColor: "#2A2A2A",
+        justifyContent: "center",
+        alignItems: "center"
     }
 });
