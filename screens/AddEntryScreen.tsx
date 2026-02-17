@@ -1,18 +1,33 @@
-import { View, Text, StyleSheet, TextInput, Button, Pressable, ScrollView, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useState } from "react";
 import { Entry, ENTRY_TYPES, EntryType } from "../type";
-import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../colors";
 import Entypo from '@expo/vector-icons/Entypo';
-import Ionicons from "@expo/vector-icons/build/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { formatDateLong } from "../utils/dateFormat";
+import HeaderGradient from "../components/HeaderGradient";
+import { formStyles } from "../components/FormStyle";
+import ScreenHeader from "../components/ScreenHeader";
 
+/**
+ * Screen for creating a new hair diary entry.
+ * 
+ * @route params:
+ * - date (string) - selected date in "YYYY-MM-DD format
+ * - onSave (function) - callback to add the new entry to the state
+ * @returns the add entry screen.
+ */
 export default function AddEntryScreen({ route, navigation }: any) {
+    // Unpacking package sent from HomeScreen
     const { date, onSave } = route.params;
 
+    // Form Fields
     const [type, setType] = useState<EntryType>("Wash");
     const [notes, setNotes] = useState("");
+    // Status of modal dropdown
     const [showDropdown, setShowDropdown] = useState(false);
 
+    // Handles the save of a new entry.
     function handleSave() {
         const newEntry: Entry = {
             id: Date.now().toString(),
@@ -25,73 +40,42 @@ export default function AddEntryScreen({ route, navigation }: any) {
         navigation.goBack();
     }
 
-    const formatDateLong = (dateString: string): string => {
-        const [year, month, day] = dateString.split("-").map(Number);
-
-        const date = new Date(year, month - 1, day);
-        const monthName = date.toLocaleDateString('en-US', { month: 'long' })
-        const dayNum = date.getDate();
-
-        const getOrdinal = (day: number): string => {
-            if (day > 3 && day < 21) return 'th';
-            switch(day % 10) {
-                case 1: return 'st';
-                case 2: return 'nd';
-                case 3: return 'rd';
-                default: return 'th';
-            }
-        };
-
-        return `${monthName} ${dayNum}${getOrdinal(dayNum)}, ${year}`;
-    }
-
+    // Resets dropdown modal after selecting type.
     const selectType = (selectedType: EntryType) => {
         setType(selectedType);
         setShowDropdown(false);
     }
 
+    // Component.
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <LinearGradient
-                colors={["#AD948B", "#EAD9D1"]}
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 140,
-                }}/>
-                <View style={styles.headerContainer}>
-                    <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-                        <Entypo name="chevron-left" size={30} color={Colors.text} />
-                    </Pressable>
-                    <Text style={styles.title}>Add Entry for</Text>
-                </View>
+                <HeaderGradient></HeaderGradient>
+                <ScreenHeader title="Add Entry" navigation={navigation} />
 
-                <Text style={styles.subtitle}>{formatDateLong(date)}</Text>
+                <Text style={styles.subtitle}>{formatDateLong(date, false)}</Text>
 
-                <View style={styles.formContainer}>
-                    <Text style={styles.label}>Type</Text>
-                    <Pressable style={styles.dropdownButton} onPress={() => setShowDropdown(true)}>
-                        <Text style={styles.dropdownText}>{type}</Text>
+                <View style={formStyles.formContainer}>
+                    <Text style={formStyles.label}>Type</Text>
+                    <Pressable style={formStyles.dropdownButton} onPress={() => setShowDropdown(true)}>
+                        <Text style={formStyles.dropdownText}>{type}</Text>
                         <Entypo name="chevron-down" size={24} color="black"/>
                     </Pressable>
 
-                    <Text style={styles.label}>Notes</Text>
+                    <Text style={formStyles.label}>Notes</Text>
                     <TextInput
                         value={notes}
                         onChangeText={setNotes}
                         placeholder="How did your hair feel today?"
-                        style={styles.input}
+                        style={formStyles.bigInput}
                         multiline
                     />
 
                     <Pressable
                         onPress={handleSave}
-                        style={styles.submitButton}
+                        style={formStyles.submitButton}
                     >
-                        <Text style={styles.submitButtonText}>Submit</Text>
+                        <Text style={formStyles.submitButtonText}>Submit</Text>
                     </Pressable>
                 </View>
 
@@ -102,18 +86,18 @@ export default function AddEntryScreen({ route, navigation }: any) {
                     onRequestClose={() => setShowDropdown(false)}
                 >
                     <Pressable
-                        style={styles.modalOverlay}
+                        style={formStyles.modalOverlay}
                         onPress={() => setShowDropdown(false)}
                     >
-                        <View style={styles.dropdownMenu}>
+                        <View style={formStyles.dropdownMenu}>
                             <ScrollView>
                                     {ENTRY_TYPES.map((t) => (
                                         <Pressable
                                             key={t}
-                                            style={styles.dropdownOption}
+                                            style={formStyles.dropdownOption}
                                             onPress={() => selectType(t as EntryType)}
                                         >
-                                            <Text style={styles.optionText}>{t}</Text>
+                                            <Text style={formStyles.optionText}>{t}</Text>
                                             {type === t && (
                                                 <Ionicons name="checkmark" size={24} color="#007AFF" />
                                             )}
@@ -134,76 +118,4 @@ const styles = StyleSheet.create({
     backButton: {width: 50, height: 50, justifyContent: "center", alignItems: "center"},
     title: { flex: 1, fontSize: 28, fontFamily: "Poppins-SemiBold", textAlign: "center" },
     subtitle: { fontSize: 24, fontFamily: "Poppins-SemiBold", textAlign: "center", marginBottom: 16 },
-    formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24 },
-    label: { fontSize: 16, marginBottom: 8, fontFamily: "Poppins-Regular" },
-    dropdownButton: {
-        backgroundColor: "white",
-        borderRadius: 12,
-        padding: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 24
-    },
-    dropdownText: {
-        fontSize: 16,
-        fontFamily: "Poppins-Regular"
-    },
-    input: {
-        backgroundColor: "white",
-        borderRadius: 12,
-        padding: 16,
-        minHeight: 120,
-        textAlignVertical: "top",
-        marginBottom: 24,
-        fontFamily: "Poppins-Regular",
-        fontSize: 16
-    },
-    submitButton: {
-        backgroundColor: "#1E1E1E",
-        borderRadius: 12,
-        paddingVertical: 16,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    submitButtonText: {
-        color: "white",
-        fontSize: 18,
-        fontFamily: "Poppins-SemiBold"
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20
-    },
-    dropdownMenu: {
-        backgroundColor: "white",
-        overflow: "hidden",
-        borderRadius: 12,
-        width: "80%",
-        maxHeight: 400,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 4
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
-    },
-    dropdownOption: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0"
-    },
-    optionText: {
-        fontSize: 16,
-        fontFamily: "Poppins-Regular",
-        color: "#000"
-    }
 });
