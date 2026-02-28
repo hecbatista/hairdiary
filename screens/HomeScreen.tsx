@@ -8,6 +8,8 @@ import { Colors } from "../colors";
 import { formatDateLong } from "../utils/dateFormat";
 import HeaderGradient from "../components/HeaderGradient";
 import { todayISO } from "../utils/todayISO";
+import { fetchUserEntries } from "../lib/supabaseEntries";
+import { fetchUserProfile } from "../lib/supabaseProfile";
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 75, backgroundColor: Colors.background },
@@ -86,7 +88,16 @@ const styles = StyleSheet.create({
         padding: 16,
         fontSize: 16,
         fontFamily: 'Poppins-Bold',
-    }
+    },
+    avatarPlaceholder: {
+        backgroundColor: '#D9D9D9',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    avatarText: {
+        fontSize: 32,
+        color: '#666',
+    },
 });
 
 /**
@@ -99,9 +110,33 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
     const [selectedDate, setSelectedDate] = useState(todayISO());
     const [entries, setEntries] = useState<Entry[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
+    const [isLoading ,setIsLoading] = useState(false);
+
+    const loadEntries = async () => {
+        setIsLoading(true);
+        try {
+            const userEntries = await fetchUserEntries();
+            console.log("Loaded entries:", userEntries);
+            setEntries(userEntries);
+        } catch (error) {
+            console.error("Error loading entries:", error);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
 
     function addEntry(entry: Entry) {
         setEntries((prev) => [...prev, entry]);
+    }
+
+    const loadProfile = async () => {
+        try {
+            const userProfile = await fetchUserProfile();
+            setProfile(userProfile);
+        } catch (error) {
+            console.error("Error loading profile:", error);
+        }
     }
 
     const entriesForSelectedDate = useMemo(() => {
@@ -126,18 +161,8 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
 
     useFocusEffect(
         useCallback(() => {
-            let isActive = true;
-
-            (async () => {
-                const saved = await loadProfile();
-                if (isActive) {
-                    setProfile(saved);
-                }
-            })();
-
-            return () => {
-                isActive = false;
-            };
+            loadEntries();
+            loadProfile();
         }, [])
     );
 
@@ -147,7 +172,14 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
 
             <View style={styles.headerRow}>
                 <Pressable style={styles.avatar} onPress={() => navigation.navigate("Profile")}>
-                    <Image source={{uri: profile?.photoUri}} style={styles.avatar} />
+                    {profile?.photoUri ? (
+                        <Image source={{uri: profile?.photoUri}} style={styles.avatar} />
+                    ) : (
+                        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                            <Text style={styles.avatarText}>👤</Text>
+                        </View>
+                    )}
+                    
                 </Pressable>
                 <Text style={styles.title}>Hair Diary</Text>        
             </View>
@@ -175,7 +207,7 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
 
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Entries on {formatDateLong(selectedDate, false)}</Text>
-                <Pressable onPress={() => navigation.navigate("AddEntry", { date: selectedDate, onSave: addEntry, })}
+                <Pressable onPress={() => navigation.navigate("AddEntry", { date: selectedDate })}
                     style={styles.button}>
                     <Text style={styles.buttonText}>Add Entry</Text>
                 </Pressable>
