@@ -5,17 +5,45 @@ An app designed to empower people embrace their hair care in an easy and visual 
 ## ⚙️ Tech Stack
 
 **Core Technolgies**
-- Reach Native
+- React Native
 - TypeScript
 - Expo
+- Supabase
 
-**Key Libraries & Tools**
-- React Navigation
-- react-native-calendars
-- expo-linear-gradient
-- expo-font
-- expo-splash-screen
-- AsyncStorage
+**Front-End Libraries**
+- **React Navigation** - Screen navigation and routing.
+- **react-native-calendars** - Interactive calendar component w/ custom styling
+- **expo-linear-gradient** - Gradient background
+- **expo-font** - Customer typography
+- **expo-image-picker** - Profile picture uploads
+
+**Back-End & Database**
+- **Supabase Auth** - User authentication & session management
+- **Supabase Database (PostgreSQL)** - Relational database w/ RLS policies
+- **Supabase Storage** - Cloud storage for Profile Pictures 
+
+## 🏗️ File structure
+```
+hair-diary/
+├── screens/
+│   ├── HomeScreen.tsx        # Calendar and entries display
+│   ├── AddEntryScreen.tsx    # Entry creation
+│   ├── ProfileScreen.tsx     # User profile management
+│   └── LoginScreen.tsx       # Authentication
+├── lib/
+│   ├── supabase.ts           # Supabase client configuration
+│   ├── supabaseEntries.ts    # Entry operations
+│   └── supabaseProfile.ts    # Profile and storage operations
+├── components/
+│   ├── form/                 # Reusable form components
+│   ├── HeaderGradient.tsx    # Background gradient header component
+│   └── ScreenHeader.tsx      # Navigation header
+├── utils/
+│   ├── dateFormat.ts         # Date formatting utilities
+│   └── todayISO.ts           # Date helper functions
+└── assets/
+    └── fonts/                # Poppins font family
+```
 
 ## 📋 Prerequisites
 
@@ -68,14 +96,23 @@ npx expo start
     <img src="screenshots/profilescreen.png" width=250 />
 </p>
 
+## 🎯 Features
+- **User Authentication** - Secure login
+- **Calendar-Based Tracking** - Visual interface w/ marked dates
+- **Custom Entry Logging** - Record daily routines, styling, and treatments
+- **Cloud Data Storage** - Entries sync across devices w/ Supabase
+- **Profile Managment** - Upload profile pictures to cloud storage
+
 ## 🥅 Goals
-- Develop Front-End Skills
-- Develop Back-End Skills
+- Develop Front-End Skills w/ React-Native
+- Develop Back-End Skills w/ Supabase and Expo Routing
 - Improve upon code design and documentation
-- Learn new technologies
+- Learn cloud storage and database integration
+- Implement machine learning reommendations
 
 ## 🚧 Possible Features
 - Good Hair Day Posts w/ used hair products!
+- Recommendations to improve hair health!
 
 ## 🧑🏽‍💻 About me
 Built by Hector Batista (a fellow curly head!) - Computer Science & Business Administration

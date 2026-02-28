@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const formStyles = StyleSheet.create({
-    formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24 },
+    formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24, width: "90%", alignSelf: "center" },
     label: { fontSize: 16, marginBottom: 8, fontFamily: "Poppins-Regular" },
     dropdownButton: {
         backgroundColor: "white",
