@@ -113,6 +113,7 @@ npx expo start
 ## 🚧 Possible Features
 - Good Hair Day Posts w/ used hair products!
 - Recommendations to improve hair health!
+- Email verification upon Sign-Up
 
 ## 🧑🏽‍💻 About me
 Built by Hector Batista (a fellow curly head!) - Computer Science & Business Administration

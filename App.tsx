@@ -10,6 +10,8 @@ import AddEntryScreen from './screens/AddEntryScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { useEffect } from 'react';
 import LoginScreen from './screens/LoginScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,6 +42,8 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen}/>
         <Stack.Screen name="AddEntry" component={AddEntryScreen}/>
         <Stack.Screen name="Profile" component={ProfileScreen}/>
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen}/>
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
