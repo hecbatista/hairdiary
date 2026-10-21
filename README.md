@@ -25,6 +25,10 @@ An app designed to empower people embrace their hair care in an easy and visual 
 ## 🏗️ File structure
 ```
 hair-diary/
+├── CLAUDE.md                 # Project guide for Claude Code
+├── .claude/
+│   ├── settings.json         # Shared Claude Code permissions
+│   └── skills/               # Project skills (start-issue, add-screen, ...)
 ├── screens/
 │   ├── HomeScreen.tsx        # Calendar and entries display
 │   ├── AddEntryScreen.tsx    # Entry creation
@@ -125,7 +129,7 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [ ] **Backend setup** - Supabase CLI w/ migrations & RLS policies in repo, local dev + seed data, generated DB types, env & secrets config
 - [ ] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
 - [ ] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
-- [ ] **Claude Code setup** - `CLAUDE.md` and project skills for AI-assisted development
+- [x] **Claude Code setup** - `CLAUDE.md` and project skills for AI-assisted development
 - [ ] **Edit & delete entries**
 - [ ] **Photos on entries** - Attach progress photos via Supabase Storage
 
