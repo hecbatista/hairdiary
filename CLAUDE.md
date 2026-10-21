@@ -14,10 +14,13 @@ It is a portfolio project: favor clean, well-documented, tested code over quick 
 npm start            # Expo dev server (press i for iOS simulator)
 npm run ios          # Start directly on the iOS simulator
 npx tsc --noEmit     # Typecheck (strict mode)
+npm run lint         # ESLint (expo config + TypeScript rules + Prettier)
+npm run lint:fix     # ESLint with autofix
+npm run format       # Format everything with Prettier
+npm run format:check # Check formatting without writing
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
-- Lint/format: ESLint + Prettier (#2)
 - Tests: Jest + React Native Testing Library (#12)
 - Supabase CLI migrations and generated types (#4, #5)
 - CI with GitHub Actions (#7)
@@ -62,7 +65,7 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
 ## Code conventions
 
 - TypeScript strict mode. Function components with default exports, one component per file, file name matching the component.
-- 4-space indentation, double quotes, semicolons.
+- 4-space indentation (2 in JSON), double quotes, semicolons, trailing commas, 100-character lines. Prettier (`.prettierrc.json`) enforces this and runs as an ESLint rule (`eslint.config.js`), so run `npm run format` or `npm run lint:fix` instead of fixing style by hand. Lint must pass with no errors or warnings.
 - Styles: `StyleSheet.create` in the same file. Use `Colors` from `colors.ts` rather than new hex values where a palette color fits. Fonts are `Poppins-Regular`, `Poppins-Medium`, `Poppins-SemiBold` and `Poppins-Bold` (set `fontFamily`, not `fontWeight`).
 - Screen layout: root `View` with `flex: 1`, `backgroundColor: Colors.background`, `paddingTop: 75`, then `<HeaderGradient/>` and either `<ScreenHeader title=... navigation=.../>` or a custom header row.
 - Forms: wrap fields in `<Form buttonText=... handleSave=...>` and use the inputs in `components/form/form_fields/` (`ShortText`, `LongText`, `Dropdown`). Shared input styles live in `components/form/FormStyle.tsx` (`formStyles`). Add new reusable inputs there instead of styling inputs per screen.

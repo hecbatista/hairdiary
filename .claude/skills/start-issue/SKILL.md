@@ -44,7 +44,7 @@ gh project item-edit --id "$ITEM" --project-id "$PID" --field-id "$FID" --single
 ## 4. Implement
 
 - Follow the conventions in `CLAUDE.md`, plus the `add-screen`, `add-data-function` and `add-form-field` skills where they apply.
-- Run `npx tsc --noEmit` before committing, and lint or tests too once they exist. Report any pre-existing failures instead of hiding them.
+- Run `npx tsc --noEmit` and `npm run lint` before committing, and tests too once they exist. Report any pre-existing failures instead of hiding them.
 - If the change adds commands, tooling or conventions, update `CLAUDE.md` (and the README setup section if it affects setup).
 
 ## 5. Open the PR

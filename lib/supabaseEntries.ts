@@ -1,8 +1,8 @@
 import { supabase } from "./supabase";
-import { Entry, EntryType } from "../type"
+import { Entry, EntryType } from "../type";
 
 /**
- * Database representation of a entry. 
+ * Database representation of a entry.
  * Maps to Entries table in Supabase.
  */
 export interface DatabaseEntry {
@@ -15,13 +15,15 @@ export interface DatabaseEntry {
 
 /**
  * Fetches authenticated user entries from database.
- * 
+ *
  * @returns {Promise<Entry[]>} The user's entries.
  * @throws {Error} if user is not logged in.
  */
 export async function fetchUserEntries(): Promise<Entry[]> {
     try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
 
         if (!user) {
             throw new Error("No user logged in!");
@@ -35,7 +37,7 @@ export async function fetchUserEntries(): Promise<Entry[]> {
 
         if (error) throw error;
 
-        return (data || []).map(dbEntry => ({
+        return (data || []).map((dbEntry) => ({
             id: dbEntry.entry_id,
             date: dbEntry.date,
             type: dbEntry.entry_type as EntryType,
@@ -48,14 +50,16 @@ export async function fetchUserEntries(): Promise<Entry[]> {
 
 /**
  * Creates a user entry in the database.
- * 
+ *
  * @param {Omit<Entry, "id">} entry the entry to upload.
  * @returns {Promise<Entry>}
  * @throws {Error} if no user is logged in or problem uploading to database.
  */
 export async function createEntry(entry: Omit<Entry, "id">): Promise<Entry> {
     try {
-        const { data : { user } } = await supabase.auth.getUser();
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
 
         if (!user) {
             throw new Error("No user logged in!");
@@ -68,11 +72,7 @@ export async function createEntry(entry: Omit<Entry, "id">): Promise<Entry> {
             notes: entry.notes || null,
         };
 
-        const { data, error } = await supabase
-            .from("Entries")
-            .insert([dbEntry])
-            .select()
-            .single();
+        const { data, error } = await supabase.from("Entries").insert([dbEntry]).select().single();
 
         if (error) throw error;
 

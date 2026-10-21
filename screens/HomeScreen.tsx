@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 20,
         marginBottom: 20,
-        fontFamily: "Poppins-SemiBold"
+        fontFamily: "Poppins-SemiBold",
     },
     calendar: {
         borderRadius: 16,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -87,30 +87,30 @@ const styles = StyleSheet.create({
     buttonText: {
         padding: 16,
         fontSize: 16,
-        fontFamily: 'Poppins-Bold',
+        fontFamily: "Poppins-Bold",
     },
     avatarPlaceholder: {
-        backgroundColor: '#D9D9D9',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "#D9D9D9",
+        justifyContent: "center",
+        alignItems: "center",
     },
     avatarText: {
         fontSize: 32,
-        color: '#666',
+        color: "#666",
     },
 });
 
 /**
  * Main screen displaying a calendar and diary entries.
  * Tap a date to view its entries, or navigate to AddEntry or Profile screens.
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
-export default function HomeScreen({ navigation }: { navigation: NavigationProp<any>} ) {
+export default function HomeScreen({ navigation }: { navigation: NavigationProp<any> }) {
     const [selectedDate, setSelectedDate] = useState(todayISO());
     const [entries, setEntries] = useState<Entry[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
-    const [isLoading ,setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const loadEntries = async () => {
         setIsLoading(true);
@@ -123,8 +123,7 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
         } finally {
             setIsLoading(false);
         }
-
-    }
+    };
 
     function addEntry(entry: Entry) {
         setEntries((prev) => [...prev, entry]);
@@ -137,7 +136,7 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
         } catch (error) {
             console.error("Error loading profile:", error);
         }
-    }
+    };
 
     const entriesForSelectedDate = useMemo(() => {
         return entries.filter((e) => e.date === selectedDate);
@@ -147,7 +146,7 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
         const marks: Record<string, any> = {};
 
         for (const e of entries) {
-            marks[e.date] = { marked: true, dotColor: "white" }
+            marks[e.date] = { marked: true, dotColor: "white" };
         }
 
         marks[selectedDate] = {
@@ -163,27 +162,26 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
         useCallback(() => {
             loadEntries();
             loadProfile();
-        }, [])
+        }, []),
     );
 
     return (
         <View style={styles.container}>
-            <HeaderGradient/>
+            <HeaderGradient />
 
             <View style={styles.headerRow}>
                 <Pressable style={styles.avatar} onPress={() => navigation.navigate("Profile")}>
                     {profile?.photoUri ? (
-                        <Image source={{uri: profile?.photoUri}} style={styles.avatar} />
+                        <Image source={{ uri: profile?.photoUri }} style={styles.avatar} />
                     ) : (
                         <View style={[styles.avatar, styles.avatarPlaceholder]}>
                             <Text style={styles.avatarText}>👤</Text>
                         </View>
                     )}
-                    
                 </Pressable>
-                <Text style={styles.title}>Hair Diary</Text>        
+                <Text style={styles.title}>Hair Diary</Text>
             </View>
-            
+
             <Calendar
                 markedDates={markedDates}
                 onDayPress={(day) => setSelectedDate(day.dateString)}
@@ -206,9 +204,13 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
             />
 
             <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Entries on {formatDateLong(selectedDate, false)}</Text>
-                <Pressable onPress={() => navigation.navigate("AddEntry", { date: selectedDate })}
-                    style={styles.button}>
+                <Text style={styles.sectionTitle}>
+                    Entries on {formatDateLong(selectedDate, false)}
+                </Text>
+                <Pressable
+                    onPress={() => navigation.navigate("AddEntry", { date: selectedDate })}
+                    style={styles.button}
+                >
                     <Text style={styles.buttonText}>Add Entry</Text>
                 </Pressable>
             </View>
@@ -230,4 +232,3 @@ export default function HomeScreen({ navigation }: { navigation: NavigationProp<
         </View>
     );
 }
-

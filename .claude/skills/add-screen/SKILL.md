@@ -68,5 +68,6 @@ If the screen shows Supabase data that other screens can change, load it in `use
 ## 5. Verify
 
 - `npx tsc --noEmit`
+- `npm run lint`
 - Run on the iOS simulator (`npm run ios`) and check the screen renders, the back button works, and data loads.
 - Update the file structure section in `README.md` and the Architecture section in `CLAUDE.md`.

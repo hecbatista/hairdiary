@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+web-build/
+ios/
+android/
+.agents/
+.claude/
+assets/
+screenshots/
+package-lock.json
+skills-lock.json
+*.md

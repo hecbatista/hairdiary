@@ -89,6 +89,7 @@ try {
 ## 5. Verify
 
 - `npx tsc --noEmit`
+- `npm run lint`
 - Exercise the flow in the simulator and confirm the row in Supabase.
 - Add unit tests with Supabase mocked once Jest is set up (#12).
 - Update the Supabase section of `CLAUDE.md` if the schema changed.

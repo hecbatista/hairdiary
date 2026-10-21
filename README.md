@@ -124,7 +124,7 @@ The app is shipped as a **TestFlight beta** and doubles as a portfolio project s
 Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com/users/hecbatista/projects/1) project board, with one ticket per item below. Phases are ordered by priority.
 
 ### Phase 1 — Foundation *(Sprint 1)*
-- [ ] **Lint & format** - ESLint + Prettier
+- [x] **Lint & format** - ESLint + Prettier
 - [ ] **Refactor & types** - Typed navigation (no `any`), consistent error handling w/ user feedback
 - [ ] **Backend setup** - Supabase CLI w/ migrations & RLS policies in repo, local dev + seed data, generated DB types, env & secrets config
 - [ ] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
