@@ -51,5 +51,6 @@ export default function <Name>({ label, value, onChange }: <name>Props) {
 ## 3. Verify
 
 - `npx tsc --noEmit`
+- `npm run lint`
 - Check it in the simulator: the label, the selected state, keyboard dismissal, and how it looks next to the other fields.
 - Add a component test with React Native Testing Library once Jest is set up (#12).

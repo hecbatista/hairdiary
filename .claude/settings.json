@@ -3,6 +3,7 @@
     "allow": [
       "Bash(npx tsc --noEmit)",
       "Bash(npm run lint:*)",
+      "Bash(npm run format:check)",
       "Bash(npm test:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",

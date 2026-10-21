@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Modal, Pressable, ScrollView, Text } from "react-native";
-import { ENTRY_TYPES, EntryType } from "../../../type";
+import { ENTRY_TYPES } from "../../../type";
 import { formStyles } from "../FormStyle";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useState } from "react";
