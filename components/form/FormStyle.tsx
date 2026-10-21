@@ -1,7 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const formStyles = StyleSheet.create({
-    formContainer: { borderRadius: 16, backgroundColor: "#AD948B", padding: 24, width: "90%", alignSelf: "center" },
+    formContainer: {
+        borderRadius: 16,
+        backgroundColor: "#AD948B",
+        padding: 24,
+        width: "90%",
+        alignSelf: "center",
+    },
     label: { fontSize: 16, marginBottom: 8, fontFamily: "Poppins-Regular" },
     dropdownButton: {
         backgroundColor: "white",
@@ -10,11 +16,11 @@ export const formStyles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 24
+        marginBottom: 24,
     },
     dropdownText: {
         fontSize: 16,
-        fontFamily: "Poppins-Regular"
+        fontFamily: "Poppins-Regular",
     },
     bigInput: {
         backgroundColor: "white",
@@ -24,26 +30,26 @@ export const formStyles = StyleSheet.create({
         textAlignVertical: "top",
         marginBottom: 24,
         fontFamily: "Poppins-Regular",
-        fontSize: 16
+        fontSize: 16,
     },
     submitButton: {
         backgroundColor: "#1E1E1E",
         borderRadius: 12,
         paddingVertical: 16,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
     submitButtonText: {
         color: "white",
         fontSize: 18,
-        fontFamily: "Poppins-SemiBold"
+        fontFamily: "Poppins-SemiBold",
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
         justifyContent: "center",
         alignItems: "center",
-        padding: 20
+        padding: 20,
     },
     dropdownMenu: {
         backgroundColor: "white",
@@ -54,7 +60,7 @@ export const formStyles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 4
+            height: 4,
         },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -66,12 +72,12 @@ export const formStyles = StyleSheet.create({
         alignItems: "center",
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0"
+        borderBottomColor: "#f0f0f0",
     },
     optionText: {
         fontSize: 16,
         fontFamily: "Poppins-Regular",
-        color: "#000"
+        color: "#000",
     },
     smallInput: {
         backgroundColor: "white",
@@ -80,7 +86,7 @@ export const formStyles = StyleSheet.create({
         textAlignVertical: "top",
         marginBottom: 24,
         fontFamily: "Poppins-Regular",
-        fontSize: 16
+        fontSize: 16,
     },
     textArea: {
         minHeight: 120,
@@ -90,7 +96,7 @@ export const formStyles = StyleSheet.create({
         alignSelf: "center",
         marginBottom: 16,
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
     },
     avatar: {
         width: 120,
@@ -115,7 +121,7 @@ export const formStyles = StyleSheet.create({
         backgroundColor: "#AD948B",
         borderRadius: 21,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     },
     editBadgeInner: {
         width: 32,
@@ -123,6 +129,6 @@ export const formStyles = StyleSheet.create({
         borderRadius: 18,
         backgroundColor: "#2A2A2A",
         justifyContent: "center",
-        alignItems: "center"
-    }
+        alignItems: "center",
+    },
 });

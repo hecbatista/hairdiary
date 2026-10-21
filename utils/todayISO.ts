@@ -1,6 +1,6 @@
 /**
  * Returns the date as a "YYYY-MM-DD" string.
- * 
+ *
  * @returns the date formated as string.
  */
 export function todayISO() {

@@ -9,16 +9,13 @@ type FormProps = {
 };
 
 export default function Form({ children, buttonText, handleSave }: FormProps) {
-    return(
+    return (
         <View>
             <View style={formStyles.formContainer}>
                 {children}
-                    <Pressable
-                        onPress={handleSave}
-                        style={formStyles.submitButton}
-                    >
-                        <Text style={formStyles.submitButtonText}>{buttonText}</Text>
-                    </Pressable>
+                <Pressable onPress={handleSave} style={formStyles.submitButton}>
+                    <Text style={formStyles.submitButtonText}>{buttonText}</Text>
+                </Pressable>
             </View>
         </View>
     );

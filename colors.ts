@@ -5,4 +5,4 @@ export const Colors = {
     accent: "#D7B5A6",
     text: "#000000",
     mutedText: "#6E6E6E",
-}
+};

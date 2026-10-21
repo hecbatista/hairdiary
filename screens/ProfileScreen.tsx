@@ -74,14 +74,13 @@ export default function ProfileScreen({ navigation }: { navigation: NavigationPr
 
         const image = result.assets[0];
 
-        
         setUploading(true);
         try {
             const publicUrl = await uploadProfilePicture(image.uri);
 
             const updatedProfile = {
                 ...profile,
-                photoUri: publicUrl
+                photoUri: publicUrl,
             };
             setProfile(updatedProfile);
 
@@ -102,12 +101,12 @@ export default function ProfileScreen({ navigation }: { navigation: NavigationPr
             <View style={styles.container}>
                 <Text>Loading Profile...</Text>
             </View>
-        )
+        );
     }
 
     return (
         <View style={styles.container}>
-            <HeaderGradient/>
+            <HeaderGradient />
             <ScreenHeader title="Profile" navigation={navigation} />
             <View style={formStyles.formContainer}>
                 <Pressable style={formStyles.avatarWrap} onPress={pickProfilePhoto}>
@@ -147,9 +146,9 @@ export default function ProfileScreen({ navigation }: { navigation: NavigationPr
                 </Pressable>
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    container: {flex: 1, padding: 24, paddingTop: 75, backgroundColor: Colors.background},
+    container: { flex: 1, padding: 24, paddingTop: 75, backgroundColor: Colors.background },
 });

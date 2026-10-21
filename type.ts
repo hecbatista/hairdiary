@@ -1,10 +1,5 @@
-export type EntryType = 
-    | "Wash"
-    | "Haircut"
-    | "Hair Mask"
-    | "Chemical Treatment"
-    | "Good Hair Day"
-    | "Other";
+export type EntryType =
+    "Wash" | "Haircut" | "Hair Mask" | "Chemical Treatment" | "Good Hair Day" | "Other";
 
 export type Entry = {
     id: string;
@@ -20,11 +15,11 @@ export const ENTRY_TYPES: EntryType[] = [
     "Hair Mask",
     "Chemical Treatment",
     "Good Hair Day",
-    "Other"
-]
+    "Other",
+];
 
 export type Profile = {
     name: string;
     journey: string;
     photoUri?: string;
-}
+};

@@ -5,7 +5,7 @@ import { Colors } from "../colors";
 import { formatDateLong } from "../utils/dateFormat";
 import HeaderGradient from "../components/HeaderGradient";
 import ScreenHeader from "../components/ScreenHeader";
-import { NavigationProp } from "@react-navigation/native"
+import { NavigationProp } from "@react-navigation/native";
 import Form from "../components/form/Form";
 import LongText from "../components/form/form_fields/LongText";
 import Dropdown from "../components/form/form_fields/Dropdown";
@@ -19,7 +19,7 @@ interface AddEntryScreenProps {
 
 /**
  * Screen for creating a new hair diary entry.
- * 
+ *
  * @route params:
  * - date (string) - selected date in "YYYY-MM-DD format
  * - onSave (function) - callback to add the new entry to the state
@@ -58,21 +58,36 @@ export default function AddEntryScreen({ route, navigation }: AddEntryScreenProp
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <HeaderGradient/>
+                <HeaderGradient />
                 <ScreenHeader title="Add Entry" navigation={navigation} />
 
                 <Text style={styles.subtitle}>{formatDateLong(date, false)}</Text>
 
                 <Form buttonText="Save Entry" handleSave={handleSave}>
-                    <Dropdown label="Type" option={type} allOptions={ENTRY_TYPES} setOption={(val) => setType(val as EntryType)}/>
-                    <LongText label="Notes" placeHolder="How did your hair feel?" value={notes} onChangeText={setNotes}/>
+                    <Dropdown
+                        label="Type"
+                        option={type}
+                        allOptions={ENTRY_TYPES}
+                        setOption={(val) => setType(val as EntryType)}
+                    />
+                    <LongText
+                        label="Notes"
+                        placeHolder="How did your hair feel?"
+                        value={notes}
+                        onChangeText={setNotes}
+                    />
                 </Form>
             </View>
         </TouchableWithoutFeedback>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    container: {flex: 1, padding: 24, paddingTop: 75, backgroundColor: Colors.background},
-    subtitle: { fontSize: 24, fontFamily: "Poppins-SemiBold", textAlign: "center", marginBottom: 16 },
+    container: { flex: 1, padding: 24, paddingTop: 75, backgroundColor: Colors.background },
+    subtitle: {
+        fontSize: 24,
+        fontFamily: "Poppins-SemiBold",
+        textAlign: "center",
+        marginBottom: 16,
+    },
 });
