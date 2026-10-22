@@ -26,6 +26,8 @@ An app designed to empower people embrace their hair care in an easy and visual 
 ```
 hair-diary/
 ├── CLAUDE.md                 # Project guide for Claude Code
+├── .env.example              # Required environment variables (copy to .env)
+├── eas.json                  # EAS Build profiles, each tied to an EAS environment
 ├── .claude/
 │   ├── settings.json         # Shared Claude Code permissions
 │   └── skills/               # Project skills (start-issue, add-screen, ...)
@@ -81,7 +83,13 @@ bash
 yarn install
 ```
 
-3. **Start the development server**
+3. **Configure environment variables** (see [Environment setup](#-environment-setup))
+```bash
+cp .env.example .env
+```
+Then fill in `.env` with your local Supabase stack's URL and anon key.
+
+4. **Start the development server**
 ```
 bash
 npm start
@@ -91,6 +99,72 @@ or
 bash
 npx expo start
 ```
+
+## 🔐 Environment setup
+
+The app reads its Supabase config from two variables. Both are listed in [`.env.example`](.env.example):
+
+| Variable | Local stack | Hosted project |
+|---|---|---|
+| `EXPO_PUBLIC_SUPABASE_URL` | `API URL` from `npx supabase status` (`http://127.0.0.1:54321`) | Dashboard → Project Settings → API → Project URL |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | `anon key` from `npx supabase status` (newer CLI versions call it the publishable key) | Dashboard → Project Settings → API → `anon` `public` key |
+
+`EXPO_PUBLIC_` variables are bundled into the app, so they must only hold public values. The anon key is safe to ship because Row Level Security protects every table. **Never** use the `service_role` / secret key in the app. If either variable is missing, the app throws on startup with a message pointing back here.
+
+### Dev and prod
+
+Dev and prod use separate backends, so testing never touches real user data:
+
+| Environment | Backend | Used by |
+|---|---|---|
+| Dev | Local Supabase stack, run with the Supabase CLI and Docker | `.env` for `npm start`, and the `development` EAS build (iOS simulator) |
+| Prod | Hosted Supabase project, created for the TestFlight release | The `preview` and `production` EAS builds |
+
+Dev runs locally so it never pauses for inactivity and doesn't use one of the Supabase free plan's two hosted project slots. The schema, RLS policies and `profile_picture` storage bucket live in the repo as migrations (#4), so the local stack and the prod project are built from the same source.
+
+> **Status:** the Supabase CLI setup and migrations arrive with #4, and the hosted prod project is created as part of the TestFlight release. Until then, `preview` and `production` builds have no backend to point at.
+
+### Local development
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/). Start the local stack, then print its URL and keys:
+```bash
+npx supabase start
+```
+```bash
+npx supabase status
+```
+Copy the `API URL` and `anon key` into `.env`. The iOS simulator reaches `127.0.0.1` on your Mac. On a physical device, use your Mac's LAN IP address instead.
+
+Expo loads `.env` automatically when you run `npm start`. `.env` and `.env*.local` are git-ignored. After changing a variable, restart with a clean cache:
+```bash
+npx expo start --clear
+```
+
+### EAS builds
+
+EAS Build does not upload your local `.env`. Each profile in [`eas.json`](eas.json) instead reads variables from its matching [EAS environment](https://docs.expo.dev/eas/environment-variables/):
+
+| Build profile | EAS environment | Backend |
+|---|---|---|
+| `development` | `development` | Local stack (`http://127.0.0.1:54321`, simulator only) |
+| `preview` | `preview` | Hosted prod project (set up at release) |
+| `production` | `production` | Hosted prod project (set up at release) |
+
+One-time setup (requires the EAS CLI and an Expo account):
+```bash
+npm install -g eas-cli
+```
+```bash
+eas login
+```
+```bash
+eas init
+```
+Then create both variables in the `development` environment with your local stack's values:
+```bash
+eas env:create --environment development --name EXPO_PUBLIC_SUPABASE_URL --value http://127.0.0.1:54321 --visibility plaintext
+```
+Repeat for `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Once the hosted prod project exists, create both variables in the `preview` and `production` environments with its values. Check the result with `eas env:list --environment development`. To pull an environment's values into a local file, run `eas env:pull --environment development` (it writes `.env.local`, which is git-ignored).
 
 
 ## 📸 Preview
