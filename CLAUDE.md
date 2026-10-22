@@ -45,7 +45,9 @@ storage/             # Legacy AsyncStorage profile cache, superseded by lib/supa
 
 ## Supabase
 
-- Client: `lib/supabase.ts`, configured from `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env`. Never commit `.env`, never read or print its contents, and never put a service-role key in the app.
+- Client: `lib/supabase.ts`, configured from `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env`. It throws on startup if either is missing. Never commit `.env`, never read or print its contents, and never put a service-role key in the app.
+- Environment: required keys are listed in `.env.example`. Add any new variable there, and to the README's Environment setup section, in the same PR. Access variables statically (`process.env.EXPO_PUBLIC_X`) so Expo can inline them.
+- Dev is the local Supabase stack (Supabase CLI + Docker, arriving with #4), used by `.env` and the `development` EAS build (simulator). Prod is a hosted Supabase project, created for the TestFlight release and used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Don't create extra hosted projects: the free plan allows only two. Schema changes go in migrations so both backends stay in sync.
 - Tables (schema is not in the repo yet; see #4):
   - `Entries`: `entry_id`, `user_id`, `date` (YYYY-MM-DD), `entry_type` (an `EntryType` string), `notes`
   - `Users`: `user_id`, `email`, `hair_journey`, `profile_picture`
