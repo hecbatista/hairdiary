@@ -18,11 +18,17 @@ npm run lint         # ESLint (expo config + TypeScript rules + Prettier)
 npm run lint:fix     # ESLint with autofix
 npm run format       # Format everything with Prettier
 npm run format:check # Check formatting without writing
+
+npx supabase start                    # Start the local Supabase stack (Docker); applies migrations + seed
+npx supabase status                   # Print local URLs and keys (API URL, anon/publishable key, Studio)
+npx supabase stop                     # Stop the local stack (keeps data)
+npx supabase migration new <name>     # Create supabase/migrations/<timestamp>_<name>.sql
+npx supabase db reset                 # Rebuild the local database from all migrations + seed.sql
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
 - Tests: Jest + React Native Testing Library (#12)
-- Supabase CLI migrations and generated types (#4, #5)
+- Generated Supabase types (#5)
 - CI with GitHub Actions (#7)
 
 ## Architecture
@@ -36,6 +42,7 @@ lib/                 # Supabase client + data-access functions (the only place t
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
 utils/               # Pure helpers (date formatting, today's ISO date)
+supabase/            # Supabase CLI project: config.toml, migrations/, seed.sql
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
 ```
 
@@ -47,12 +54,14 @@ storage/             # Legacy AsyncStorage profile cache, superseded by lib/supa
 
 - Client: `lib/supabase.ts`, configured from `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env`. It throws on startup if either is missing. Never commit `.env`, never read or print its contents, and never put a service-role key in the app.
 - Environment: required keys are listed in `.env.example`. Add any new variable there, and to the README's Environment setup section, in the same PR. Access variables statically (`process.env.EXPO_PUBLIC_X`) so Expo can inline them.
-- Dev is the local Supabase stack (Supabase CLI + Docker, arriving with #4), used by `.env` and the `development` EAS build (simulator). Prod is a hosted Supabase project, created for the TestFlight release and used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Don't create extra hosted projects: the free plan allows only two. Schema changes go in migrations so both backends stay in sync.
-- Tables (schema is not in the repo yet; see #4):
-  - `Entries`: `entry_id`, `user_id`, `date` (YYYY-MM-DD), `entry_type` (an `EntryType` string), `notes`
-  - `Users`: `user_id`, `email`, `hair_journey`, `profile_picture`
-- Storage bucket: `profile_picture`, with files at `{user_id}/{user_id}-{timestamp}.{ext}`
-- Every query is scoped to the current user (`.eq("user_id", user.id)`), and RLS enforces ownership server side. Any new table needs RLS policies.
+- Dev is the local Supabase stack (Supabase CLI + Docker, see Commands), used by `.env` and the `development` EAS build (simulator). Prod is a hosted Supabase project, created for the TestFlight release and used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Don't create extra hosted projects: the free plan allows only two. Schema changes go in migrations so both backends stay in sync.
+- Schema lives in `supabase/migrations/` (Supabase CLI, imperative migrations). The local stack is built from it; never change a database by hand without a migration. Create files with `npx supabase migration new <name>` (don't invent timestamps), don't edit migrations that are already on `main`, and verify with `npx supabase db reset`.
+- Tables (quoted, capitalized names, matching the app's `.from("Entries")` / `.from("Users")`):
+  - `Entries`: `entry_id` (uuid), `user_id`, `date` (`date`, returned as YYYY-MM-DD), `entry_type` (text with a check constraint listing `ENTRY_TYPES`; adding a type needs a migration), `notes`, `created_at`
+  - `Users`: `user_id`, `email`, `hair_journey`, `profile_picture`, `created_at`. One row per auth user, inserted by the `on_auth_user_created` trigger (`private.handle_new_user()`), never by the app. Users can only update `hair_journey` and `profile_picture` (column-level grant).
+- Storage bucket: `profile_picture` (public, images up to 10 MiB), with files at `{user_id}/{user_id}-{timestamp}.{ext}`. Policies allow each user to read and write only their own `{user_id}/` folder.
+- Every query is scoped to the current user (`.eq("user_id", user.id)`), and RLS enforces ownership server side. New tables are not exposed to the Data API automatically (`auto_expose_new_tables = false` in `config.toml`, matching hosted projects since Oct 30, 2026), so every new table's migration needs explicit `grant`s to `authenticated` (and `service_role`), `enable row level security`, and owner policies using `(select auth.uid()) = user_id` with `to authenticated`. Grant `anon` nothing unless a feature is truly public.
+- Local seed (`supabase/seed.sql`): test account `test@hairdiary.test` / `password123` with a profile and a few entries.
 - The auth session is not persisted yet (no AsyncStorage `auth.storage` configured; see #13).
 
 ### `lib/` function pattern
@@ -95,7 +104,7 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
   - `add-screen`: new screen with the standard layout, registered in `App.tsx`
   - `add-data-function`: Supabase data-access function in `lib/`, plus schema/RLS changes
   - `add-form-field`: reusable input in `components/form/form_fields/`
-- Add a skill when a workflow repeats, e.g. writing tests once Jest lands (#12) or applying migrations once the Supabase CLI lands (#4).
+- Add a skill when a workflow repeats, e.g. writing tests once Jest lands (#12) or writing migrations now that the Supabase CLI is set up.
 - `.claude/settings.json` holds shared permissions: safe read-only commands are allowed and reading `.env` is denied. It also enables the Expo plugin. Personal overrides go in `.claude/settings.local.json`, which is git-ignored.
 
 ### Third-party skills
