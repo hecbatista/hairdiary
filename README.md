@@ -44,6 +44,10 @@ hair-diary/
 │   ├── form/                 # Reusable form components
 │   ├── HeaderGradient.tsx    # Background gradient header component
 │   └── ScreenHeader.tsx      # Navigation header
+├── supabase/
+│   ├── config.toml           # Local Supabase stack config (Supabase CLI)
+│   ├── migrations/           # Schema, RLS policies and storage bucket, as SQL
+│   └── seed.sql              # Local test user and entries
 ├── utils/
 │   ├── dateFormat.ts         # Date formatting utilities
 │   └── todayISO.ts           # Date helper functions
@@ -60,6 +64,7 @@ Before you begin, ensure you have the following installed.
 - **Node.js** (v14.0 or higher)
 - **npm** (v6.0 or higher) or **yarn**
 - **Git**
+- **Docker** ([Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev/)) to run the local Supabase stack
 
 ## Installation
 
@@ -87,7 +92,7 @@ yarn install
 ```bash
 cp .env.example .env
 ```
-Then fill in `.env` with your local Supabase stack's URL and anon key.
+Then fill in `.env` with your local Supabase stack's URL and anon key (see [Local development](#local-development)).
 
 4. **Start the development server**
 ```
@@ -120,25 +125,53 @@ Dev and prod use separate backends, so testing never touches real user data:
 | Dev | Local Supabase stack, run with the Supabase CLI and Docker | `.env` for `npm start`, and the `development` EAS build (iOS simulator) |
 | Prod | Hosted Supabase project, created for the TestFlight release | The `preview` and `production` EAS builds |
 
-Dev runs locally so it never pauses for inactivity and doesn't use one of the Supabase free plan's two hosted project slots. The schema, RLS policies and `profile_picture` storage bucket live in the repo as migrations (#4), so the local stack and the prod project are built from the same source.
+Dev runs locally so it never pauses for inactivity and doesn't use one of the Supabase free plan's two hosted project slots. The schema, RLS policies and `profile_picture` storage bucket live in the repo as migrations (see [Database migrations](#database-migrations)), so the local stack and the prod project are built from the same source.
 
-> **Status:** the Supabase CLI setup and migrations arrive with #4, and the hosted prod project is created as part of the TestFlight release. Until then, `preview` and `production` builds have no backend to point at.
+> **Status:** the hosted prod project is created as part of the TestFlight release. Until then, `preview` and `production` builds have no backend to point at.
 
 ### Local development
 
-Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/). Start the local stack, then print its URL and keys:
+The app runs against a local Supabase stack (Postgres, Auth, Storage and the REST API in Docker), started by the [Supabase CLI](https://supabase.com/docs/guides/local-development). The CLI is a dev dependency, so `npm install` installs it and every command runs through `npx`. Docker must be running ([Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev/)).
+
+1. **Start the stack** (the first run downloads the Docker images and takes a few minutes)
 ```bash
 npx supabase start
 ```
+This applies the migrations in `supabase/migrations/` and loads `supabase/seed.sql`. Print the URLs and keys again at any time with:
 ```bash
 npx supabase status
 ```
-Copy the `API URL` and `anon key` into `.env`. The iOS simulator reaches `127.0.0.1` on your Mac. On a physical device, use your Mac's LAN IP address instead.
 
-Expo loads `.env` automatically when you run `npm start`. `.env` and `.env*.local` are git-ignored. After changing a variable, restart with a clean cache:
+2. **Point the app at it.** Copy the `API URL` and `anon key` into `.env` (created from `.env.example` in [Installation](#installation)). The iOS simulator reaches `127.0.0.1` on your Mac. On a physical device, use your Mac's LAN IP address instead.
+
+   Expo loads `.env` automatically when you run `npm start`. `.env` and `.env*.local` are git-ignored. After changing a variable, restart with a clean cache:
 ```bash
 npx expo start --clear
 ```
+
+3. **Sign in** with the seeded test account: `test@hairdiary.test` / `password123`. It comes with a profile and a few entries. You can add more accounts in Studio (`http://127.0.0.1:54323`) under Authentication. A profile row is created for every new account automatically.
+
+Stop the stack when you're done (data is kept until the next reset):
+```bash
+npx supabase stop
+```
+
+### Database migrations
+
+Every schema change, RLS policy and storage bucket is a SQL file in `supabase/migrations/`, applied in filename order. To change the schema:
+
+1. Create a new migration file (never edit one that has already been merged):
+```bash
+npx supabase migration new <short_description>
+```
+2. Write the SQL. A new table in `public` needs, in the same migration: explicit `grant`s for the `authenticated` and `service_role` roles (new tables are not exposed to the API automatically), `enable row level security`, and policies that limit rows to their owner.
+3. Rebuild the local database from scratch (all migrations plus the seed) and check the app still works:
+```bash
+npx supabase db reset
+```
+4. Commit the migration with the app code that uses it.
+
+The hosted prod project (created for the TestFlight release) gets the same migrations by linking it once with `npx supabase link --project-ref <ref>`, then running `npx supabase db push`. The seed file only runs locally.
 
 ### EAS builds
 
