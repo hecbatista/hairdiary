@@ -26,6 +26,12 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"]
+    "plugins": ["expo-font"],
+    "extra": {
+      "eas": {
+        "projectId": "b3b55018-f8cb-4706-a15a-49b49661a890"
+      }
+    },
+    "owner": "hbatista908"
   }
 }
