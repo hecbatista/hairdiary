@@ -1,0 +1,70 @@
+# Hair Diary override for Supabase's official self-hosted compose stack.
+#
+# Layered last in COMPOSE_FILE (after docker-compose.yml and docker-compose.caddy.yml) so the
+# stack fits the 1 GB Azure for Students B2ats v2 VM. It keeps only what the app uses:
+#   db, auth, rest, storage, api-gw (Envoy) and caddy (HTTPS).
+# Studio and postgres-meta start on demand with the "studio" profile:
+#   sudo docker compose --profile studio up -d studio meta
+#   sudo docker compose stop studio meta
+# Realtime, Edge Functions, Supavisor and imgproxy are off ("full" profile). Turning them on
+# needs a bigger VM.
+
+services:
+    # The gateway normally waits for Studio to be healthy. Studio is optional here.
+    api-gw:
+        depends_on: !reset {}
+
+    caddy:
+        depends_on: !override
+            api-gw:
+                condition: service_healthy
+
+    storage:
+        depends_on: !override
+            db:
+                condition: service_healthy
+            rest:
+                condition: service_started
+        environment:
+            ENABLE_IMAGE_TRANSFORMATION: "false"
+
+    db:
+        # Reachable only from the VM itself; use an SSH tunnel (see push-migrations.sh).
+        ports:
+            - "127.0.0.1:5432:5432"
+        command:
+            [
+                "postgres",
+                "-c",
+                "config_file=/etc/postgresql/postgresql.conf",
+                "-c",
+                "log_min_messages=fatal",
+                "-c",
+                "shared_buffers=96MB",
+                "-c",
+                "effective_cache_size=256MB",
+                "-c",
+                "work_mem=2MB",
+                "-c",
+                "maintenance_work_mem=32MB",
+                "-c",
+                "max_connections=60",
+            ]
+
+    studio:
+        profiles: ["studio"]
+
+    meta:
+        profiles: ["studio"]
+
+    realtime:
+        profiles: ["full"]
+
+    functions:
+        profiles: ["full"]
+
+    supavisor:
+        profiles: ["full"]
+
+    imgproxy:
+        profiles: ["full"]

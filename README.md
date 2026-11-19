@@ -48,6 +48,7 @@ hair-diary/
 │   ├── config.toml           # Local Supabase stack config (Supabase CLI)
 │   ├── migrations/           # Schema, RLS policies and storage bucket, as SQL
 │   └── seed.sql              # Local test user and entries
+├── infra/azure/              # Prod: self-hosted Supabase on an Azure VM
 ├── utils/
 │   ├── dateFormat.ts         # Date formatting utilities
 │   └── todayISO.ts           # Date helper functions
@@ -109,10 +110,10 @@ npx expo start
 
 The app reads its Supabase config from two variables. Both are listed in [`.env.example`](.env.example):
 
-| Variable | Local stack | Hosted project |
+| Variable | Local stack | Prod (Azure) |
 |---|---|---|
-| `EXPO_PUBLIC_SUPABASE_URL` | `API URL` from `npx supabase status` (`http://127.0.0.1:54321`) | Dashboard → Project Settings → API → Project URL |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | `anon key` from `npx supabase status` (newer CLI versions call it the publishable key) | Dashboard → Project Settings → API → `anon` `public` key |
+| `EXPO_PUBLIC_SUPABASE_URL` | `API URL` from `npx supabase status` (`http://127.0.0.1:54321`) | `API URL` printed by `infra/azure/deploy.sh` |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | `anon key` from `npx supabase status` (newer CLI versions call it the publishable key) | `Publishable key` printed by `infra/azure/deploy.sh` |
 
 `EXPO_PUBLIC_` variables are bundled into the app, so they must only hold public values. The anon key is safe to ship because Row Level Security protects every table. **Never** use the `service_role` / secret key in the app. If either variable is missing, the app throws on startup with a message pointing back here.
 
@@ -123,11 +124,9 @@ Dev and prod use separate backends, so testing never touches real user data:
 | Environment | Backend | Used by |
 |---|---|---|
 | Dev | Local Supabase stack, run with the Supabase CLI and Docker | `.env` for `npm start`, and the `development` EAS build (iOS simulator) |
-| Prod | Hosted Supabase project, created for the TestFlight release | The `preview` and `production` EAS builds |
+| Prod | Self-hosted Supabase on an Azure VM ([`infra/azure/`](infra/azure/README.md)) | The `preview` and `production` EAS builds |
 
-Dev runs locally so it never pauses for inactivity and doesn't use one of the Supabase free plan's two hosted project slots. The schema, RLS policies and `profile_picture` storage bucket live in the repo as migrations (see [Database migrations](#database-migrations)), so the local stack and the prod project are built from the same source.
-
-> **Status:** the hosted prod project is created as part of the TestFlight release. Until then, `preview` and `production` builds have no backend to point at.
+Dev runs locally so it never pauses for inactivity. Prod is Supabase's official Docker stack on an Azure for Students VM, behind HTTPS; [`infra/azure/README.md`](infra/azure/README.md) covers deploying, operating and backing it up. The schema, RLS policies and `profile_picture` storage bucket live in the repo as migrations (see [Database migrations](#database-migrations)), so the local stack and prod are built from the same source.
 
 ### Local development
 
@@ -171,7 +170,7 @@ npx supabase db reset
 ```
 4. Commit the migration with the app code that uses it.
 
-The hosted prod project (created for the TestFlight release) gets the same migrations by linking it once with `npx supabase link --project-ref <ref>`, then running `npx supabase db push`. The seed file only runs locally.
+Prod gets the same migrations with `infra/azure/push-migrations.sh` (add `--dry-run` to preview), which runs `npx supabase db push` through an SSH tunnel to the Azure VM. The seed file only runs locally.
 
 ### EAS builds
 
@@ -180,8 +179,8 @@ EAS Build does not upload your local `.env`. Each profile in [`eas.json`](eas.js
 | Build profile | EAS environment | Backend |
 |---|---|---|
 | `development` | `development` | Local stack (`http://127.0.0.1:54321`, simulator only) |
-| `preview` | `preview` | Hosted prod project (set up at release) |
-| `production` | `production` | Hosted prod project (set up at release) |
+| `preview` | `preview` | Prod on Azure (`https://<host>` from `infra/azure/deploy.sh`) |
+| `production` | `production` | Prod on Azure |
 
 One-time setup (requires the EAS CLI and an Expo account):
 ```bash
@@ -195,9 +194,9 @@ eas init
 ```
 Then create both variables in the `development` environment with your local stack's values:
 ```bash
-eas env:create --environment development --name EXPO_PUBLIC_SUPABASE_URL --value http://127.0.0.1:54321 --visibility plaintext
+eas env:set --environment development --name EXPO_PUBLIC_SUPABASE_URL --value http://127.0.0.1:54321 --visibility plaintext
 ```
-Repeat for `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Once the hosted prod project exists, create both variables in the `preview` and `production` environments with its values. Check the result with `eas env:list --environment development`. To pull an environment's values into a local file, run `eas env:pull --environment development` (it writes `.env.local`, which is git-ignored).
+Repeat for `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Create both variables in the `preview` and `production` environments with the prod values printed by `infra/azure/deploy.sh`. Check the result with `eas env:list --environment development`. To pull an environment's values into a local file, run `eas env:pull --environment development` (it writes `.env.local`, which is git-ignored).
 
 
 ## 📸 Preview

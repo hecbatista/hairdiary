@@ -24,6 +24,9 @@ npx supabase status                   # Print local URLs and keys (API URL, anon
 npx supabase stop                     # Stop the local stack (keeps data)
 npx supabase migration new <name>     # Create supabase/migrations/<timestamp>_<name>.sql
 npx supabase db reset                 # Rebuild the local database from all migrations + seed.sql
+
+infra/azure/deploy.sh                 # Create/update the prod VM on Azure and (re)start Supabase on it
+infra/azure/push-migrations.sh        # Apply supabase/migrations/ to prod (--dry-run to preview)
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
@@ -43,6 +46,7 @@ type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
 utils/               # Pure helpers (date formatting, today's ISO date)
 supabase/            # Supabase CLI project: config.toml, migrations/, seed.sql
+infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootstrap, backup scripts)
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
 ```
 
@@ -54,7 +58,8 @@ storage/             # Legacy AsyncStorage profile cache, superseded by lib/supa
 
 - Client: `lib/supabase.ts`, configured from `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env`. It throws on startup if either is missing. Never commit `.env`, never read or print its contents, and never put a service-role key in the app.
 - Environment: required keys are listed in `.env.example`. Add any new variable there, and to the README's Environment setup section, in the same PR. Access variables statically (`process.env.EXPO_PUBLIC_X`) so Expo can inline them.
-- Dev is the local Supabase stack (Supabase CLI + Docker, see Commands), used by `.env` and the `development` EAS build (simulator). Prod is a hosted Supabase project, created for the TestFlight release and used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Don't create extra hosted projects: the free plan allows only two. Schema changes go in migrations so both backends stay in sync.
+- Dev is the local Supabase stack (Supabase CLI + Docker, see Commands), used by `.env` and the `development` EAS build (simulator). Prod is self-hosted Supabase on an Azure for Students VM (`infra/azure/`, see its README), used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Schema changes go in migrations so both backends stay in sync; apply them to prod with `infra/azure/push-migrations.sh`.
+- Prod runs a trimmed stack on a 1 GB VM: Postgres, Auth, PostgREST, Storage, the Envoy gateway and Caddy (HTTPS). Realtime, Edge Functions, Supavisor and imgproxy are off, so a feature that needs one of them (e.g. Edge Functions for #33) also needs a bigger VM. There is no SMTP yet: prod auto-confirms email sign ups and can't send auth emails. Prod secrets live only in `~/supabase/.env` on the VM; never copy them into the repo.
 - Schema lives in `supabase/migrations/` (Supabase CLI, imperative migrations). The local stack is built from it; never change a database by hand without a migration. Create files with `npx supabase migration new <name>` (don't invent timestamps), don't edit migrations that are already on `main`, and verify with `npx supabase db reset`.
 - Tables (quoted, capitalized names, matching the app's `.from("Entries")` / `.from("Users")`):
   - `Entries`: `entry_id` (uuid), `user_id`, `date` (`date`, returned as YYYY-MM-DD), `entry_type` (text with a check constraint listing `ENTRY_TYPES`; adding a type needs a migration), `notes`, `created_at`
