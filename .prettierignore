@@ -6,7 +6,10 @@ ios/
 android/
 .agents/
 .claude/
-assets/
+assets/*
+!assets/brand/
+assets/brand/*
+!assets/brand/build.mjs
 screenshots/
 package-lock.json
 skills-lock.json

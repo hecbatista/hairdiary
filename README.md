@@ -285,7 +285,7 @@ The gluestack-ui setup lands before the remaining Phase 1 UI work (edit/delete, 
 - [ ] **Dark mode** - Follows the system setting
 - [ ] **Accessibility pass** - VoiceOver, Dynamic Type, touch targets, contrast
 - [ ] **Empty states** - Designed empty day list, first-run Home, avatar placeholder
-- [ ] **App icon & splash screen**
+- [x] **App icon & splash screen**
 - [ ] **Navigation & IA** - Decide the top-level navigation (e.g. tab bar) before Phase 3
 
 ### Phase 2 — Accounts & Onboarding
