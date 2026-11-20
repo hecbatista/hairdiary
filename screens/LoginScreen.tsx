@@ -1,4 +1,3 @@
-import { NavigationProp } from "@react-navigation/native";
 import { View, StyleSheet, Text, Pressable, TextInput } from "react-native";
 import { Colors } from "../colors";
 import HeaderGradient from "../components/HeaderGradient";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import Form from "../components/form/Form";
 import ShortText from "../components/form/form_fields/ShortText";
+import type { RootStackScreenProps } from "../navigation/types";
 
 const styles = StyleSheet.create({
     container: {
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function LoginScreen({ navigation }: { navigation: NavigationProp<any> }) {
+export default function LoginScreen({ navigation }: RootStackScreenProps<"Login">) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");

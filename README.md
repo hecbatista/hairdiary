@@ -44,6 +44,8 @@ hair-diary/
 │   ├── form/                 # Reusable form components
 │   ├── HeaderGradient.tsx    # Background gradient header component
 │   └── ScreenHeader.tsx      # Navigation header
+├── navigation/
+│   └── types.ts              # Typed routes (RootStackParamList)
 ├── supabase/
 │   ├── config.toml           # Local Supabase stack config (Supabase CLI)
 │   ├── migrations/           # Schema, RLS policies and storage bucket, as SQL

@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { NavigationProp, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, View, Text, FlatList, Image, Pressable } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Entry, Profile } from "../type";
@@ -10,6 +10,7 @@ import HeaderGradient from "../components/HeaderGradient";
 import { todayISO } from "../utils/todayISO";
 import { fetchUserEntries } from "../lib/supabaseEntries";
 import { fetchUserProfile } from "../lib/supabaseProfile";
+import type { RootStackScreenProps } from "../navigation/types";
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 75, backgroundColor: Colors.background },
@@ -103,10 +104,10 @@ const styles = StyleSheet.create({
 /**
  * Main screen displaying a calendar and diary entries.
  * Tap a date to view its entries, or navigate to AddEntry or Profile screens.
- * @param param0
- * @returns
+ * @param props - screen props from the root stack; `navigation` opens AddEntry and Profile
+ * @returns the home screen.
  */
-export default function HomeScreen({ navigation }: { navigation: NavigationProp<any> }) {
+export default function HomeScreen({ navigation }: RootStackScreenProps<"Home">) {
     const [selectedDate, setSelectedDate] = useState(todayISO());
     const [entries, setEntries] = useState<Entry[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
