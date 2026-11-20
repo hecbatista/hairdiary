@@ -23,7 +23,14 @@ function labelOfRow(element: Element): string[] {
 
 describe("Dropdown", () => {
     it("shows the label and the selected option with the menu closed", () => {
-        render(<Dropdown label="Entry type" option="Wash" setOption={jest.fn()} />);
+        render(
+            <Dropdown
+                label="Entry type"
+                option="Wash"
+                options={ENTRY_TYPES}
+                setOption={jest.fn()}
+            />,
+        );
 
         expect(screen.getByText("Entry type")).toBeOnTheScreen();
         expect(screen.getByText("Wash")).toBeOnTheScreen();
@@ -31,7 +38,14 @@ describe("Dropdown", () => {
     });
 
     it("lists every entry type exactly once when opened", () => {
-        render(<Dropdown label="Entry type" option="Wash" setOption={jest.fn()} />);
+        render(
+            <Dropdown
+                label="Entry type"
+                option="Wash"
+                options={ENTRY_TYPES}
+                setOption={jest.fn()}
+            />,
+        );
 
         fireEvent.press(screen.getByText("Wash"));
 
@@ -43,7 +57,14 @@ describe("Dropdown", () => {
     });
 
     it("marks only the selected option with a checkmark", () => {
-        render(<Dropdown label="Entry type" option="Haircut" setOption={jest.fn()} />);
+        render(
+            <Dropdown
+                label="Entry type"
+                option="Haircut"
+                options={ENTRY_TYPES}
+                setOption={jest.fn()}
+            />,
+        );
 
         fireEvent.press(screen.getByText("Haircut"));
 
@@ -52,9 +73,34 @@ describe("Dropdown", () => {
         expect(labelOfRow(checkmarks[0])).toEqual(["Haircut"]);
     });
 
+    it("lists only the options it is given, in order", () => {
+        render(
+            <Dropdown
+                label="Size"
+                option="M"
+                options={["S", "M", "L"] as const}
+                setOption={jest.fn()}
+            />,
+        );
+
+        fireEvent.press(screen.getByText("M"));
+
+        const rows = screen.getAllByText(/^[SML]$/).map((text) => text.props.children);
+        // The first "M" is the closed button; the menu rows follow in order.
+        expect(rows).toEqual(["M", "S", "M", "L"]);
+        expect(screen.queryByText("Wash")).not.toBeOnTheScreen();
+    });
+
     it("reports the chosen option and closes the menu", () => {
         const setOption = jest.fn();
-        render(<Dropdown label="Entry type" option="Wash" setOption={setOption} />);
+        render(
+            <Dropdown
+                label="Entry type"
+                option="Wash"
+                options={ENTRY_TYPES}
+                setOption={setOption}
+            />,
+        );
 
         fireEvent.press(screen.getByText("Wash"));
         fireEvent.press(screen.getByText("Good Hair Day"));

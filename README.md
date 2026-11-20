@@ -1,5 +1,7 @@
 # 💇‍♀️ Hair Diary
 
+[![CI](https://github.com/hecbatista/hairdiary/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hecbatista/hairdiary/actions/workflows/ci.yml)
+
 An app designed to empower people embrace their hair care in an easy and visual way. It helps track hair care routines, products, and styles. Built with React Native and TypeScript, it helps people achieve their goals of their hair care journey.
 
 ## ⚙️ Tech Stack
@@ -32,6 +34,7 @@ hair-diary/
 ├── CLAUDE.md                 # Project guide for Claude Code
 ├── .env.example              # Required environment variables (copy to .env)
 ├── eas.json                  # EAS Build profiles, each tied to an EAS environment
+├── .github/workflows/ci.yml  # CI: typecheck, lint, format check, tests
 ├── .claude/
 │   ├── settings.json         # Shared Claude Code permissions
 │   └── skills/               # Project skills (start-issue, add-screen, ...)
@@ -225,6 +228,8 @@ npm run test:watch
 - Icons from `@expo/vector-icons` render as a stub with the test ID `icon-<name>` (see `jest.config.js`).
 - Every test starts in the `America/Los_Angeles` time zone (`test/timeZoneEnvironment.js`), so date tests don't depend on your machine. Call `setTimeZone("Pacific/Auckland")` to test another zone; setting `process.env.TZ` inside a test has no effect.
 
+[CI](.github/workflows/ci.yml) runs `npx tsc --noEmit`, `npm run lint`, `npm run format:check` and `npm test` on every pull request and every push to `main`. Run the same four commands locally before pushing.
+
 ## 📸 Preview
 <p align=center>
     <img src="screenshots/homescreen.png" width=250 />
@@ -260,7 +265,7 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [ ] **Refactor & types** - Typed navigation (no `any`), consistent error handling w/ user feedback
 - [ ] **Backend setup** - Supabase CLI w/ migrations & RLS policies in repo, local dev + seed data, generated DB types, env & secrets config
 - [x] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
-- [ ] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
+- [x] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
 - [x] **Claude Code setup** - `CLAUDE.md` and project skills for AI-assisted development
 - [ ] **Edit & delete entries**
 - [ ] **Photos on entries** - Attach progress photos via Supabase Storage
