@@ -60,7 +60,7 @@ hair-diary/
 │   ├── dateFormat.ts         # Date formatting utilities
 │   └── todayISO.ts           # Date helper functions
 ├── jest.config.js            # Jest config (jest-expo preset)
-├── test/                     # Shared test stubs (e.g. vector icons)
+├── test/                     # Jest support: time zone environment, setTimeZone() type, icon stub
 └── assets/
     └── fonts/                # Poppins font family
 ```
