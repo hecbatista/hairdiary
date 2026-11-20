@@ -8,9 +8,9 @@ import { Colors } from "../colors";
 import { formatDateLong } from "../utils/dateFormat";
 import HeaderGradient from "../components/HeaderGradient";
 import { todayISO } from "../utils/todayISO";
-import type { RootStackScreenProps } from "../navigation/types";
 import { fetchUserEntries } from "../lib/supabaseEntries";
 import { fetchUserProfile } from "../lib/supabaseProfile";
+import type { RootStackScreenProps } from "../navigation/types";
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, paddingTop: 75, backgroundColor: Colors.background },
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
 /**
  * Main screen displaying a calendar and diary entries.
  * Tap a date to view its entries, or navigate to AddEntry or Profile screens.
- * @param param0
- * @returns
+ * @param props - screen props from the root stack; `navigation` opens AddEntry and Profile
+ * @returns the home screen.
  */
 export default function HomeScreen({ navigation }: RootStackScreenProps<"Home">) {
     const [selectedDate, setSelectedDate] = useState(todayISO());
