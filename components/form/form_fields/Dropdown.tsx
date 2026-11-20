@@ -30,7 +30,7 @@ export default function Dropdown<T extends string>({
 }: DropdownProps<T>) {
     const [showDropdown, setShowDropdown] = useState(false);
 
-    // Resets dropdown modal after selecting type.
+    // Reports the chosen option and closes the menu.
     const selectOption = (selectedOption: T) => {
         setOption(selectedOption);
         setShowDropdown(false);

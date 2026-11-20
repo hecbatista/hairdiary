@@ -265,7 +265,7 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [ ] **Refactor & types** - Typed navigation (no `any`), consistent error handling w/ user feedback
 - [ ] **Backend setup** - Supabase CLI w/ migrations & RLS policies in repo, local dev + seed data, generated DB types, env & secrets config
 - [x] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
-- [ ] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
+- [x] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
 - [x] **Claude Code setup** - `CLAUDE.md` and project skills for AI-assisted development
 - [ ] **Edit & delete entries**
 - [ ] **Photos on entries** - Attach progress photos via Supabase Storage
