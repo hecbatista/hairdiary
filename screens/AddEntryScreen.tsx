@@ -60,8 +60,8 @@ export default function AddEntryScreen({ route, navigation }: RootStackScreenPro
                     <Dropdown
                         label="Type"
                         option={type}
-                        allOptions={ENTRY_TYPES}
-                        setOption={(val) => setType(val as EntryType)}
+                        options={ENTRY_TYPES}
+                        setOption={setType}
                     />
                     <LongText
                         label="Notes"

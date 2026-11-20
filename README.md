@@ -1,5 +1,7 @@
 # 💇‍♀️ Hair Diary
 
+[![CI](https://github.com/hecbatista/hairdiary/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hecbatista/hairdiary/actions/workflows/ci.yml)
+
 An app designed to empower people embrace their hair care in an easy and visual way. It helps track hair care routines, products, and styles. Built with React Native and TypeScript, it helps people achieve their goals of their hair care journey.
 
 ## ⚙️ Tech Stack
@@ -32,6 +34,7 @@ hair-diary/
 ├── CLAUDE.md                 # Project guide for Claude Code
 ├── .env.example              # Required environment variables (copy to .env)
 ├── eas.json                  # EAS Build profiles, each tied to an EAS environment
+├── .github/workflows/ci.yml  # CI: typecheck, lint, format check, tests
 ├── .claude/
 │   ├── settings.json         # Shared Claude Code permissions
 │   └── skills/               # Project skills (start-issue, add-screen, ...)
@@ -224,6 +227,8 @@ npm run test:watch
 - `lib/` tests call `jest.mock("../supabase")`, which swaps in the manual mock in `lib/__mocks__/supabase.ts`, so no real client is created. Read its helpers (`mockUser`, `createQueryBuilder`) with `jest.requireMock("../supabase")` to get the same instance the code under test uses.
 - Icons from `@expo/vector-icons` render as a stub with the test ID `icon-<name>` (see `jest.config.js`).
 - Every test starts in the `America/Los_Angeles` time zone (`test/timeZoneEnvironment.js`), so date tests don't depend on your machine. Call `setTimeZone("Pacific/Auckland")` to test another zone; setting `process.env.TZ` inside a test has no effect.
+
+[CI](.github/workflows/ci.yml) runs `npx tsc --noEmit`, `npm run lint`, `npm run format:check` and `npm test` on every pull request and every push to `main`. Run the same four commands locally before pushing.
 
 ## 📸 Preview
 <p align=center>

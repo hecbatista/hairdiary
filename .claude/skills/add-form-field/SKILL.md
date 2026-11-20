@@ -36,7 +36,7 @@ export default function <Name>({ label, value, onChange }: <name>Props) {
 
 - Keep it controlled: no internal copy of `value`. Local UI state, like `showDropdown` in `Dropdown.tsx`, is fine.
 - Type the props precisely. Avoid `any`, and use a generic (`<T extends string>`) when the field works with any option list.
-- Pass option lists in as props instead of importing domain constants. (`Dropdown` currently hardcodes `ENTRY_TYPES`; don't copy that.)
+- Pass option lists in as props instead of importing domain constants. (`Dropdown` takes `options`, e.g. `options={ENTRY_TYPES}`.)
 - Add new shared styles to `formStyles` in `FormStyle.tsx` and reuse `Colors` and the Poppins fonts.
 - Use `@expo/vector-icons` (Ionicons, Entypo) for icons, as the existing fields do.
 
