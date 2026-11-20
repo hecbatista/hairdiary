@@ -53,4 +53,4 @@ export default function <Name>({ label, value, onChange }: <name>Props) {
 - `npx tsc --noEmit`
 - `npm run lint`
 - Check it in the simulator: the label, the selected state, keyboard dismissal, and how it looks next to the other fields.
-- Add a component test with React Native Testing Library once Jest is set up (#12).
+- Add a component test in `components/form/form_fields/__tests__/<Name>.test.tsx` (see the existing ones and the Testing section of `CLAUDE.md`), then run `npm test`.
