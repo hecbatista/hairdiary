@@ -27,13 +27,13 @@ npx supabase status                   # Print local URLs and keys (API URL, anon
 npx supabase stop                     # Stop the local stack (keeps data)
 npx supabase migration new <name>     # Create supabase/migrations/<timestamp>_<name>.sql
 npx supabase db reset                 # Rebuild the local database from all migrations + seed.sql
+npm run gen:types                     # Regenerate lib/database.types.ts from the local database schema
 
 infra/azure/deploy.sh                 # Create/update the prod VM on Azure and (re)start Supabase on it
 infra/azure/push-migrations.sh        # Apply supabase/migrations/ to prod (--dry-run to preview)
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
-- Generated Supabase types (#5)
 - CI with GitHub Actions (#7)
 
 ## Architecture
@@ -43,6 +43,7 @@ App.tsx              # Font loading, splash screen, native stack navigator
 screens/             # One file per screen (Login, Home, AddEntry, Profile)
 components/          # Shared UI (HeaderGradient, ScreenHeader)
 components/form/     # Form wrapper, shared formStyles, and form_fields/ inputs
+navigation/          # RootStackParamList and RootStackScreenProps (typed routes)
 lib/                 # Supabase client + data-access functions (the only place that talks to Supabase, except auth in LoginScreen)
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
@@ -56,7 +57,7 @@ infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootst
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
 ```
 
-**Navigation:** a single native stack in `App.tsx` with `headerShown: false`. Routes: `Login`, `Home`, `AddEntry` (param `date: "YYYY-MM-DD"`), `Profile`. Screens draw their own header with `HeaderGradient` + `ScreenHeader`. Route params are currently untyped (`NavigationProp<any>`, `route: any`). Typing them is issue #6.
+**Navigation:** a single native stack in `App.tsx` with `headerShown: false`. Routes: `Login`, `Home`, `AddEntry` (param `date: "YYYY-MM-DD"`), `Profile`. Screens draw their own header with `HeaderGradient` + `ScreenHeader`. Routes and their params are declared in `RootStackParamList` (`navigation/types.ts`), which also types `useNavigation()` globally. Screens type their props as `RootStackScreenProps<"RouteName">`; components that receive `navigation` use `NavigationProp<RootStackParamList>`. A new route needs an entry in `RootStackParamList`.
 
 **Data flow:** screens call async functions in `lib/`. HomeScreen reloads entries and the profile in `useFocusEffect`, so returning from AddEntry or Profile refreshes data automatically.
 
@@ -66,6 +67,7 @@ storage/             # Legacy AsyncStorage profile cache, superseded by lib/supa
 - Environment: required keys are listed in `.env.example`. Add any new variable there, and to the README's Environment setup section, in the same PR. Access variables statically (`process.env.EXPO_PUBLIC_X`) so Expo can inline them.
 - Dev is the local Supabase stack (Supabase CLI + Docker, see Commands), used by `.env` and the `development` EAS build (simulator). Prod is self-hosted Supabase on an Azure for Students VM (`infra/azure/`, see its README), used by the `preview` and `production` builds. Each profile in `eas.json` reads its variables from the matching EAS environment, not from `.env`. Schema changes go in migrations so both backends stay in sync; apply them to prod with `infra/azure/push-migrations.sh`.
 - Prod runs a trimmed stack on a 1 GB VM: Postgres, Auth, PostgREST, Storage, the Envoy gateway and Caddy (HTTPS). Realtime, Edge Functions, Supavisor and imgproxy are off, so a feature that needs one of them (e.g. Edge Functions for #33) also needs a bigger VM. There is no SMTP yet: prod auto-confirms email sign ups and can't send auth emails. Prod secrets live only in `~/supabase/.env` on the VM; never copy them into the repo.
+- Types: `lib/database.types.ts` is generated from the local database by `npm run gen:types` (`supabase gen types typescript`, then Prettier). Never edit it by hand. After adding or changing a migration, run `npx supabase db reset` then `npm run gen:types`, and commit the regenerated file with the migration. The client in `lib/supabase.ts` is `createClient<Database>`, so table names, columns and row shapes are type checked.
 - Schema lives in `supabase/migrations/` (Supabase CLI, imperative migrations). The local stack is built from it; never change a database by hand without a migration. Create files with `npx supabase migration new <name>` (don't invent timestamps), don't edit migrations that are already on `main`, and verify with `npx supabase db reset`.
 - Tables (quoted, capitalized names, matching the app's `.from("Entries")` / `.from("Users")`):
   - `Entries`: `entry_id` (uuid), `user_id`, `date` (`date`, returned as YYYY-MM-DD), `entry_type` (text with a check constraint listing `ENTRY_TYPES`; adding a type needs a migration), `notes`, `created_at`
@@ -81,7 +83,7 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
 1. JSDoc with `@param`, `@returns` and `@throws`.
 2. Get the user with `supabase.auth.getUser()` and throw `new Error("No user logged in!")` if there is none.
 3. Query with the user's id and throw any Supabase `error`.
-4. Map snake_case database rows (`entry_id`, `entry_type`) to the camelCase app types in `type.ts` (`id`, `type`). Database row shapes are declared as interfaces in the same file (e.g. `DatabaseEntry`) until generated types arrive (#5).
+4. Map snake_case database rows (`entry_id`, `entry_type`) to the camelCase app types in `type.ts` (`id`, `type`). Use the generated helpers from `lib/database.types.ts` for database shapes (`Tables<"Entries">` for rows, `TablesInsert<"Entries">` / `TablesUpdate<"Entries">` for writes) instead of hand-written interfaces, and keep the mapping in one helper per table (e.g. `toEntry`).
 5. Let errors propagate. The screen decides how to show them.
 
 ## Code conventions

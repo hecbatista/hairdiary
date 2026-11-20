@@ -9,12 +9,12 @@ import Entypo from "@expo/vector-icons/Entypo";
 import HeaderGradient from "../components/HeaderGradient";
 import { formStyles } from "../components/form/FormStyle";
 import ScreenHeader from "../components/ScreenHeader";
-import { NavigationProp } from "@react-navigation/native";
+import type { RootStackScreenProps } from "../navigation/types";
 import { fetchUserProfile, updateUserProfile, uploadProfilePicture } from "../lib/supabaseProfile";
 
 const DEFAULT_PROFILE: Profile = { name: "", journey: "", photoUri: undefined };
 
-export default function ProfileScreen({ navigation }: { navigation: NavigationProp<any> }) {
+export default function ProfileScreen({ navigation }: RootStackScreenProps<"Profile">) {
     const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);

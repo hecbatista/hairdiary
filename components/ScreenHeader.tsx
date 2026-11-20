@@ -1,12 +1,13 @@
 import { View, Pressable, Text, StyleSheet } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Colors } from "../colors";
+import type { RootStackParamList } from "../navigation/types";
 
 // Type declaration
 interface ScreenHeaderProps {
     title: string;
-    navigation: NavigationProp<any>;
+    navigation: NavigationProp<RootStackParamList>;
 }
 
 // Style Sheet
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
  *
  * @params
  * - title (string): the title of the screen
- * - navigation (NavigationProp<any): the navigation to use to go back
+ * - navigation (NavigationProp<RootStackParamList>): the navigation to use to go back
  * @returns the screen header.
  */
 export default function ScreenHeader({ title, navigation }: ScreenHeaderProps) {

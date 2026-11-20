@@ -42,12 +42,15 @@ hair-diary/
 │   └── LoginScreen.tsx       # Authentication
 ├── lib/
 │   ├── supabase.ts           # Supabase client configuration
+│   ├── database.types.ts     # Generated DB types (npm run gen:types), don't edit
 │   ├── supabaseEntries.ts    # Entry operations
 │   └── supabaseProfile.ts    # Profile and storage operations
 ├── components/
 │   ├── form/                 # Reusable form components
 │   ├── HeaderGradient.tsx    # Background gradient header component
 │   └── ScreenHeader.tsx      # Navigation header
+├── navigation/
+│   └── types.ts              # Typed routes (RootStackParamList)
 ├── supabase/
 │   ├── config.toml           # Local Supabase stack config (Supabase CLI)
 │   ├── migrations/           # Schema, RLS policies and storage bucket, as SQL
@@ -174,7 +177,11 @@ npx supabase migration new <short_description>
 ```bash
 npx supabase db reset
 ```
-4. Commit the migration with the app code that uses it.
+4. Regenerate the TypeScript types in `lib/database.types.ts` from the local database (the Supabase client is typed with them, so `npx tsc --noEmit` catches code that no longer matches the schema):
+```bash
+npm run gen:types
+```
+5. Commit the migration, the regenerated types and the app code that uses them.
 
 Prod gets the same migrations with `infra/azure/push-migrations.sh` (add `--dry-run` to preview), which runs `npx supabase db push` through an SSH tunnel to the Azure VM. The seed file only runs locally.
 
@@ -258,11 +265,23 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [ ] **Edit & delete entries**
 - [ ] **Photos on entries** - Attach progress photos via Supabase Storage
 
+### Phase 1.5 — Design Foundation
+The gluestack-ui setup lands before the remaining Phase 1 UI work (edit/delete, photos, error feedback), so those are built on it.
+- [ ] **HIG & accessibility audit** - Review the current screens against Apple's Human Interface Guidelines
+- [ ] **Design system** - gluestack-ui v5 + NativeWind w/ theme tokens (color, type, spacing, radius); `CLAUDE.md` & skills updated
+- [ ] **Figma trial** - Mock up Home & Add Entry, then decide whether Figma joins the workflow
+- [ ] **Component & screen migration** - Form components and all screens rebuilt on gluestack
+- [ ] **Dark mode** - Follows the system setting
+- [ ] **Accessibility pass** - VoiceOver, Dynamic Type, touch targets, contrast
+- [ ] **Empty states** - Designed empty day list, first-run Home, avatar placeholder
+- [ ] **App icon & splash screen**
+- [ ] **Navigation & IA** - Decide the top-level navigation (e.g. tab bar) before Phase 3
+
 ### Phase 2 — Accounts & Onboarding
 - [ ] **Sign up flow** - Email sign up & password reset
 - [ ] **OAuth** - Sign in with Apple / Google
 - [ ] **Hair profile quiz** - Hair type, porosity, density, and goals during onboarding
-- [ ] **Settings & account** - Edit profile, dark mode, data export, delete account
+- [ ] **Settings & account** - Edit profile, theme setting, data export, delete account
 
 ### Phase 3 — Richer Diary
 - [ ] **Product shelf** - Save the products you own and use
@@ -287,7 +306,7 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [ ] **Classic ML model** - Research & train a model on routine/product outcomes once enough data exists
 
 ### 🚀 Release
-- [ ] **TestFlight beta** - EAS Build & submit, app icon, splash screen, privacy policy
+- [ ] **TestFlight beta** - EAS Build & submit, privacy policy
 
 ## 🧑🏽‍💻 About me
 Built by Hector Batista (a fellow curly head!) - Computer Science & Business Administration

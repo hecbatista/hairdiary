@@ -11,22 +11,17 @@ Use `screens/AddEntryScreen.tsx` as the reference. The skeleton:
 
 ```tsx
 import { View, Text, StyleSheet } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
 import { Colors } from "../colors";
 import HeaderGradient from "../components/HeaderGradient";
 import ScreenHeader from "../components/ScreenHeader";
-
-//Type declaration
-interface <Name>ScreenProps {
-    navigation: NavigationProp<any>;
-}
+import type { RootStackScreenProps } from "../navigation/types";
 
 /**
  * <One-line description of the screen.>
  *
  * @returns the <name> screen.
  */
-export default function <Name>Screen({ navigation }: <Name>ScreenProps) {
+export default function <Name>Screen({ navigation }: RootStackScreenProps<"<Name>">) {
     return (
         <View style={styles.container}>
             <HeaderGradient/>
@@ -41,13 +36,24 @@ const styles = StyleSheet.create({
 });
 ```
 
-- If typed navigation params exist (issue #6), use them instead of `NavigationProp<any>`.
+- Type props with `RootStackScreenProps<"<Name>">` (add `route` to the destructuring if the screen reads params). Never use `NavigationProp<any>` or `route: any`.
 - Wrap the screen in `TouchableWithoutFeedback onPress={Keyboard.dismiss}` if it has text inputs.
 - Use `Colors` and the Poppins font families (`fontFamily: "Poppins-SemiBold"`, etc.).
 - For cards and lists, reuse the card style from `screens/HomeScreen.tsx` (white, `borderRadius: 12`, soft shadow).
 - Build forms with `Form` + `components/form/form_fields/*`.
 
-## 2. Register the route in `App.tsx`
+## 2. Add the route to `RootStackParamList` and register it in `App.tsx`
+
+In `navigation/types.ts`, add the route with its params (`undefined` if it takes none):
+
+```ts
+export type RootStackParamList = {
+    // ...
+    <Name>: undefined; // or e.g. { entryId: string }
+};
+```
+
+Then register it in `App.tsx`:
 
 ```tsx
 import <Name>Screen from './screens/<Name>Screen';
@@ -55,7 +61,7 @@ import <Name>Screen from './screens/<Name>Screen';
 <Stack.Screen name="<Name>" component={<Name>Screen}/>
 ```
 
-If the route takes params, document them in the screen's JSDoc (like `@route params` in AddEntryScreen). Add them to the param list type too once #6 lands.
+If the route takes params, also document them in the screen's JSDoc (like `@route params` in AddEntryScreen). `navigation.navigate` and `route.params` are type-checked against `RootStackParamList`.
 
 ## 3. Link to it
 
