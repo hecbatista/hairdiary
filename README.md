@@ -216,6 +216,7 @@ npm run test:watch
 - Tests sit next to the code in `__tests__/` folders, named `<File>.test.ts(x)`.
 - `lib/` tests call `jest.mock("../supabase")`, which swaps in the manual mock in `lib/__mocks__/supabase.ts`, so no real client is created. Read its helpers (`mockUser`, `createQueryBuilder`) with `jest.requireMock("../supabase")` to get the same instance the code under test uses.
 - Icons from `@expo/vector-icons` render as a stub with the test ID `icon-<name>` (see `jest.config.js`).
+- Every test starts in the `America/Los_Angeles` time zone (`test/timeZoneEnvironment.js`), so date tests don't depend on your machine. Call `setTimeZone("Pacific/Auckland")` to test another zone; setting `process.env.TZ` inside a test has no effect.
 
 ## 📸 Preview
 <p align=center>

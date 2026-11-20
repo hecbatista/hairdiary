@@ -8,8 +8,11 @@ const { supabase, createQueryBuilder, mockUser } =
 
 const USER = { id: "user-123", email: "curly.sue@hairdiary.test" };
 
+// Reset implementations too (not just calls), so a test that forgets mockUser() can't
+// inherit the previous test's user. Scoped to these files: a global resetMocks would also wipe
+// the implementations of jest-expo's React Native mocks.
 beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
 });
 
 describe("fetchUserProfile", () => {
@@ -128,15 +131,14 @@ describe("updateUserProfile", () => {
 });
 
 describe("uploadProfilePicture", () => {
-    const realFetch = global.fetch;
     const upload = jest.fn();
     const getPublicUrl = jest.fn();
 
     /** Makes `fetch(uri)` resolve to an image with the given number of bytes. */
     function mockImage(byteLength: number) {
-        global.fetch = jest.fn().mockResolvedValue({
+        jest.spyOn(global, "fetch").mockResolvedValue({
             arrayBuffer: () => Promise.resolve(new ArrayBuffer(byteLength)),
-        });
+        } as Response);
     }
 
     beforeEach(() => {
@@ -151,7 +153,6 @@ describe("uploadProfilePicture", () => {
     });
 
     afterEach(() => {
-        global.fetch = realFetch;
         jest.restoreAllMocks();
     });
 

@@ -26,8 +26,14 @@ describe("formatDateLong", () => {
         expect(formatDateLong(input, false)).toBe(expected);
     });
 
-    it("keeps the calendar day regardless of time zone", () => {
-        // Parsed as a local date, so the first of the month never shifts to the previous day.
-        expect(formatDateLong("2026-01-01", true)).toBe("January 1st, 2026");
-    });
+    it.each(["America/Los_Angeles", "UTC", "Pacific/Auckland"])(
+        "keeps the calendar day in %s",
+        (timeZone) => {
+            setTimeZone(timeZone);
+
+            // Parsed as a local date, so the first of the month never shifts to the previous day.
+            expect(formatDateLong("2026-01-01", true)).toBe("January 1st, 2026");
+            expect(formatDateLong("2026-12-31", true)).toBe("December 31st, 2026");
+        },
+    );
 });
