@@ -13,6 +13,7 @@ An app designed to empower people embrace their hair care in an easy and visual 
 - Supabase
 
 **Front-End Libraries**
+- **gluestack-ui v5** on **NativeWind v5** (Tailwind CSS v4) - UI kit and theme tokens (`global.css`)
 - **React Navigation** - Screen navigation and routing.
 - **react-native-calendars** - Interactive calendar component w/ custom styling
 - **expo-linear-gradient** - Gradient background
@@ -50,6 +51,7 @@ hair-diary/
 │   └── supabaseProfile.ts    # Profile and storage operations
 ├── components/
 │   ├── form/                 # Reusable form components
+│   ├── ui/                   # gluestack-ui components (added with npx gluestack-ui add)
 │   ├── HeaderGradient.tsx    # Background gradient header component
 │   └── ScreenHeader.tsx      # Navigation header
 ├── navigation/
@@ -62,8 +64,11 @@ hair-diary/
 ├── utils/
 │   ├── dateFormat.ts         # Date formatting utilities
 │   └── todayISO.ts           # Date helper functions
+├── global.css                # Theme tokens: colors, fonts, type scale, spacing, radius
+├── colors.ts                 # Hex copies of the color tokens (calendar, gradient)
+├── metro.config.js           # NativeWind (className support, compiles global.css)
 ├── jest.config.js            # Jest config (jest-expo preset)
-├── test/                     # Jest support: time zone environment, setTimeZone() type, icon stub
+├── test/                     # Jest support: time zone environment, setTimeZone() type, icon/CSS stubs
 └── assets/
     └── fonts/                # Poppins font family
 ```
@@ -225,6 +230,7 @@ npm run test:watch
 ```
 - Tests sit next to the code in `__tests__/` folders, named `<File>.test.ts(x)`.
 - `lib/` tests call `jest.mock("../supabase")`, which swaps in the manual mock in `lib/__mocks__/supabase.ts`, so no real client is created. Read its helpers (`mockUser`, `createQueryBuilder`) with `jest.requireMock("../supabase")` to get the same instance the code under test uses.
+- `className` works in tests: `babel.config.js` adds `nativewind/babel` when Jest runs. `global.css` imports resolve to an empty stub; to check real styles, compile it as `components/ui/gluestack-ui-provider/__tests__/` does.
 - Icons from `@expo/vector-icons` render as a stub with the test ID `icon-<name>` (see `jest.config.js`).
 - Every test starts in the `America/Los_Angeles` time zone (`test/timeZoneEnvironment.js`), so date tests don't depend on your machine. Call `setTimeZone("Pacific/Auckland")` to test another zone; setting `process.env.TZ` inside a test has no effect.
 
