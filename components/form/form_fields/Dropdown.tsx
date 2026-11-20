@@ -1,21 +1,37 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Modal, Pressable, ScrollView, Text } from "react-native";
-import { ENTRY_TYPES } from "../../../type";
 import { formStyles } from "../FormStyle";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useState } from "react";
 
-interface dropdownProps {
+interface DropdownProps<T extends string> {
     label: string;
-    option: any;
-    setOption: (constant: any) => void;
+    /** The currently selected option, shown on the closed button. */
+    option: T;
+    /** Every option the menu lists, in display order. */
+    options: readonly T[];
+    setOption: (option: T) => void;
 }
 
-export default function Dropdown({ label, option, setOption }: dropdownProps) {
+/**
+ * Single-select dropdown: a button showing the selected option that opens a modal menu.
+ *
+ * @param label - text shown above the button
+ * @param option - the selected option
+ * @param options - the options to list in the menu
+ * @param setOption - called with the option the user picks
+ * @returns the dropdown field.
+ */
+export default function Dropdown<T extends string>({
+    label,
+    option,
+    options,
+    setOption,
+}: DropdownProps<T>) {
     const [showDropdown, setShowDropdown] = useState(false);
 
-    // Resets dropdown modal after selecting type.
-    const selectOption = (selectedOption: any) => {
+    // Reports the chosen option and closes the menu.
+    const selectOption = (selectedOption: T) => {
         setOption(selectedOption);
         setShowDropdown(false);
     };
@@ -37,11 +53,11 @@ export default function Dropdown({ label, option, setOption }: dropdownProps) {
                 <Pressable style={formStyles.modalOverlay} onPress={() => setShowDropdown(false)}>
                     <View style={formStyles.dropdownMenu}>
                         <ScrollView>
-                            {ENTRY_TYPES.map((t) => (
+                            {options.map((t) => (
                                 <Pressable
                                     key={t}
                                     style={formStyles.dropdownOption}
-                                    onPress={() => selectOption(t as any)}
+                                    onPress={() => selectOption(t)}
                                 >
                                     <Text style={formStyles.optionText}>{t}</Text>
                                     {option === t && (
