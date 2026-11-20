@@ -18,6 +18,9 @@ npm run lint         # ESLint (expo config + TypeScript rules + Prettier)
 npm run lint:fix     # ESLint with autofix
 npm run format       # Format everything with Prettier
 npm run format:check # Check formatting without writing
+npm test             # Jest (jest-expo preset + React Native Testing Library)
+npm run test:watch   # Jest in watch mode
+npx jest <path>      # Run one test file or folder
 
 npx supabase start                    # Start the local Supabase stack (Docker); applies migrations + seed
 npx supabase status                   # Print local URLs and keys (API URL, anon/publishable key, Studio)
@@ -30,7 +33,6 @@ infra/azure/push-migrations.sh        # Apply supabase/migrations/ to prod (--dr
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
-- Tests: Jest + React Native Testing Library (#12)
 - Generated Supabase types (#5)
 - CI with GitHub Actions (#7)
 
@@ -45,6 +47,9 @@ lib/                 # Supabase client + data-access functions (the only place t
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
 utils/               # Pure helpers (date formatting, today's ISO date)
+**/__tests__/        # Jest tests next to the code they cover (<File>.test.ts(x))
+lib/__mocks__/       # Manual Jest mock of the Supabase client (lib/supabase.ts)
+test/                # Shared test stubs (vector icons), wired up in jest.config.js
 supabase/            # Supabase CLI project: config.toml, migrations/, seed.sql
 infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootstrap, backup scripts)
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
@@ -88,6 +93,14 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
 - Dates are `"YYYY-MM-DD"` strings throughout. Use `todayISO()` and `formatDateLong()` from `utils/`.
 - Add JSDoc to exported functions and components, matching the existing style.
 - Prefer small, focused changes that match the surrounding code. Don't reformat unrelated code.
+
+## Testing
+
+- Jest with the `jest-expo` preset (`jest.config.js`) and React Native Testing Library. Tests live in `__tests__/` next to the code, named `<File>.test.ts(x)`. Run `npm test` before committing; it needs no `.env` or Supabase stack.
+- Test behavior, not implementation: what a function returns or throws and what it asks Supabase for, or what a component shows and reports through its props.
+- `lib/` tests: call `jest.mock("../supabase")` (uses `lib/__mocks__/supabase.ts`) and read `supabase`, `mockUser` and `createQueryBuilder` with `jest.requireMock("../supabase")`. Don't import from `__mocks__` directly: that is a separate module instance from the one the code under test sees. Assert user-id scoping (`eq("user_id", ...)`), snake_case → camelCase mapping, `"No user logged in!"`, and error propagation.
+- Component tests: query by what the user sees (`getByText`, `getByPlaceholderText`, `getByDisplayValue`) and use `fireEvent` for presses and typing. Icons render as `<View testID="icon-<name>">`.
+- Upgrading Expo: reinstall the test packages with `npx expo install jest-expo jest @types/jest -- --save-dev`, and keep `react-test-renderer` pinned to the exact `react` version.
 
 ## Known issues
 
