@@ -40,6 +40,7 @@ Not set up yet (each has a roadmap issue; add the command here when it lands):
 App.tsx              # Font loading, splash screen, native stack navigator
 screens/             # One file per screen (Login, Home, AddEntry, Profile)
 components/          # Shared UI (HeaderGradient, ScreenHeader)
+navigation/          # RootStackParamList and RootStackScreenProps (typed routes)
 components/form/     # Form wrapper, shared formStyles, and form_fields/ inputs
 lib/                 # Supabase client + data-access functions (the only place that talks to Supabase, except auth in LoginScreen)
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
@@ -50,7 +51,7 @@ infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootst
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
 ```
 
-**Navigation:** a single native stack in `App.tsx` with `headerShown: false`. Routes: `Login`, `Home`, `AddEntry` (param `date: "YYYY-MM-DD"`), `Profile`. Screens draw their own header with `HeaderGradient` + `ScreenHeader`. Route params are currently untyped (`NavigationProp<any>`, `route: any`). Typing them is issue #6.
+**Navigation:** a single native stack in `App.tsx` with `headerShown: false`. Routes: `Login`, `Home`, `AddEntry` (param `date: "YYYY-MM-DD"`), `Profile`. Screens draw their own header with `HeaderGradient` + `ScreenHeader`. Routes and their params are declared in `RootStackParamList` (`navigation/types.ts`), which also types `useNavigation()` globally. Screens type their props as `RootStackScreenProps<"RouteName">`; components that receive `navigation` use `NavigationProp<RootStackParamList>`. A new route needs an entry in `RootStackParamList`.
 
 **Data flow:** screens call async functions in `lib/`. HomeScreen reloads entries and the profile in `useFocusEffect`, so returning from AddEntry or Profile refreshes data automatically.
 

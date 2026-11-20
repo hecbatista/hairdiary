@@ -10,10 +10,11 @@ import AddEntryScreen from "./screens/AddEntryScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import { useEffect } from "react";
 import LoginScreen from "./screens/LoginScreen";
+import type { RootStackParamList } from "./navigation/types";
 
 SplashScreen.preventAutoHideAsync();
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
     const [loaded, error] = useFonts({

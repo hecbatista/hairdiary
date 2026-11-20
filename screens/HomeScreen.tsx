@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { NavigationProp, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, View, Text, FlatList, Image, Pressable } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Entry, Profile } from "../type";
@@ -8,6 +8,7 @@ import { Colors } from "../colors";
 import { formatDateLong } from "../utils/dateFormat";
 import HeaderGradient from "../components/HeaderGradient";
 import { todayISO } from "../utils/todayISO";
+import type { RootStackScreenProps } from "../navigation/types";
 import { fetchUserEntries } from "../lib/supabaseEntries";
 import { fetchUserProfile } from "../lib/supabaseProfile";
 
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
  * @param param0
  * @returns
  */
-export default function HomeScreen({ navigation }: { navigation: NavigationProp<any> }) {
+export default function HomeScreen({ navigation }: RootStackScreenProps<"Home">) {
     const [selectedDate, setSelectedDate] = useState(todayISO());
     const [entries, setEntries] = useState<Entry[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);

@@ -5,27 +5,20 @@ import { Colors } from "../colors";
 import { formatDateLong } from "../utils/dateFormat";
 import HeaderGradient from "../components/HeaderGradient";
 import ScreenHeader from "../components/ScreenHeader";
-import { NavigationProp } from "@react-navigation/native";
 import Form from "../components/form/Form";
 import LongText from "../components/form/form_fields/LongText";
 import Dropdown from "../components/form/form_fields/Dropdown";
 import { createEntry } from "../lib/supabaseEntries";
-
-//Type declaration
-interface AddEntryScreenProps {
-    route: any;
-    navigation: NavigationProp<any>;
-}
+import type { RootStackScreenProps } from "../navigation/types";
 
 /**
  * Screen for creating a new hair diary entry.
  *
  * @route params:
- * - date (string) - selected date in "YYYY-MM-DD format
- * - onSave (function) - callback to add the new entry to the state
+ * - date (string) - selected date in "YYYY-MM-DD" format
  * @returns the add entry screen.
  */
-export default function AddEntryScreen({ route, navigation }: AddEntryScreenProps) {
+export default function AddEntryScreen({ route, navigation }: RootStackScreenProps<"AddEntry">) {
     // Unpacking package sent from HomeScreen
     const { date } = route.params;
 
