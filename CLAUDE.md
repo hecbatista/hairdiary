@@ -40,8 +40,8 @@ Not set up yet (each has a roadmap issue; add the command here when it lands):
 App.tsx              # Font loading, splash screen, native stack navigator
 screens/             # One file per screen (Login, Home, AddEntry, Profile)
 components/          # Shared UI (HeaderGradient, ScreenHeader)
-navigation/          # RootStackParamList and RootStackScreenProps (typed routes)
 components/form/     # Form wrapper, shared formStyles, and form_fields/ inputs
+navigation/          # RootStackParamList and RootStackScreenProps (typed routes)
 lib/                 # Supabase client + data-access functions (the only place that talks to Supabase, except auth in LoginScreen)
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
