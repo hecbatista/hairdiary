@@ -18,6 +18,9 @@ npm run lint         # ESLint (expo config + TypeScript rules + Prettier)
 npm run lint:fix     # ESLint with autofix
 npm run format       # Format everything with Prettier
 npm run format:check # Check formatting without writing
+npm test             # Jest (jest-expo preset + React Native Testing Library)
+npm run test:watch   # Jest in watch mode
+npx jest <path>      # Run one test file or folder
 
 npx supabase start                    # Start the local Supabase stack (Docker); applies migrations + seed
 npx supabase status                   # Print local URLs and keys (API URL, anon/publishable key, Studio)
@@ -31,7 +34,6 @@ infra/azure/push-migrations.sh        # Apply supabase/migrations/ to prod (--dr
 ```
 
 Not set up yet (each has a roadmap issue; add the command here when it lands):
-- Tests: Jest + React Native Testing Library (#12)
 - CI with GitHub Actions (#7)
 
 ## Architecture
@@ -46,6 +48,10 @@ lib/                 # Supabase client + data-access functions (the only place t
 type.ts              # App-level types (Entry, EntryType, ENTRY_TYPES, Profile)
 colors.ts            # Color palette (Colors)
 utils/               # Pure helpers (date formatting, today's ISO date)
+**/__tests__/        # Jest tests next to the code they cover (<File>.test.ts(x))
+lib/__mocks__/       # Manual Jest mock of the Supabase client (lib/supabase.ts)
+test/                # Jest support, wired up in jest.config.js: timeZoneEnvironment.js (pinned TZ +
+                     # setTimeZone()), globals.d.ts (its type), vectorIconMock.tsx (icon stub)
 supabase/            # Supabase CLI project: config.toml, migrations/, seed.sql
 infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootstrap, backup scripts)
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
@@ -91,6 +97,16 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
 - Add JSDoc to exported functions and components, matching the existing style.
 - Prefer small, focused changes that match the surrounding code. Don't reformat unrelated code.
 
+## Testing
+
+- Jest with the `jest-expo` preset (`jest.config.js`) and React Native Testing Library. Tests live in `__tests__/` next to the code, named `<File>.test.ts(x)`. Run `npm test` before committing; it needs no `.env` or Supabase stack.
+- Test behavior, not implementation: what a function returns or throws and what it asks Supabase for, or what a component shows and reports through its props.
+- `lib/` tests: call `jest.mock("../supabase")` (uses `lib/__mocks__/supabase.ts`) and read `supabase`, `mockUser` and `createQueryBuilder` with `jest.requireMock("../supabase")`. Don't import from `__mocks__` directly: that is a separate module instance from the one the code under test sees. Assert user-id scoping (`eq("user_id", ...)`), snake_case → camelCase mapping, `"No user logged in!"`, and error propagation.
+- Mocks: `lib/` tests call `jest.resetAllMocks()` in `beforeEach`, so every test sets its own user and query results (a test that forgets `mockUser()` fails instead of inheriting one). Don't turn on `resetMocks` globally: it also wipes jest-expo's React Native mocks. Mock globals with `jest.spyOn(global, "fetch")` and undo them with `jest.restoreAllMocks()` in `afterEach`, rather than reassigning them.
+- Time zones: every test starts in `America/Los_Angeles` (`test/timeZoneEnvironment.js`), so results don't depend on the machine. Call the `setTimeZone("Pacific/Auckland")` global to switch zones within a test; setting `process.env.TZ` in a test has no effect. Test date code in the evening in a zone behind UTC and the morning in one ahead of it, with `jest.useFakeTimers({ now })`.
+- Component tests: query by what the user sees (`getByText`, `getByPlaceholderText`, `getByDisplayValue`) and use `fireEvent` for presses and typing. Icons render as `<View testID="icon-<name>">`.
+- Upgrading Expo: run `npx expo install --check` to see the `jest-expo` / `jest` / `@types/jest` versions the SDK expects and install them with `npm install --save-dev` (`npx expo install ... -- --save-dev` puts them in `dependencies`). Keep `react-test-renderer` pinned to the exact `react` version.
+
 ## Known issues
 
 - `npx tsc --noEmit` currently fails: `AddEntryScreen` passes `allOptions` to `Dropdown`, but `Dropdown` doesn't accept that prop and always renders `ENTRY_TYPES`.
@@ -111,7 +127,7 @@ Follow the existing functions in `lib/supabaseEntries.ts`:
   - `add-screen`: new screen with the standard layout, registered in `App.tsx`
   - `add-data-function`: Supabase data-access function in `lib/`, plus schema/RLS changes
   - `add-form-field`: reusable input in `components/form/form_fields/`
-- Add a skill when a workflow repeats, e.g. writing tests once Jest lands (#12) or writing migrations now that the Supabase CLI is set up.
+- Add a skill when a workflow repeats, e.g. writing tests (see the Testing section) or writing migrations now that the Supabase CLI is set up.
 - `.claude/settings.json` holds shared permissions: safe read-only commands are allowed and reading `.env` is denied. It also enables the Expo plugin. Personal overrides go in `.claude/settings.local.json`, which is git-ignored.
 
 ### Third-party skills

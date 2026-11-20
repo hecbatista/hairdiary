@@ -91,5 +91,5 @@ try {
 - `npx tsc --noEmit`
 - `npm run lint`
 - Exercise the flow in the simulator and confirm the row in Supabase.
-- Add unit tests with Supabase mocked once Jest is set up (#12).
+- Add unit tests in `lib/__tests__/` with Supabase mocked (see the Testing section of `CLAUDE.md`): user-id scoping, row mapping, `"No user logged in!"` and error propagation. Run `npm test`.
 - Update the Supabase section of `CLAUDE.md` if the schema changed.

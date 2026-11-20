@@ -22,6 +22,10 @@ An app designed to empower people embrace their hair care in an easy and visual 
 - **Supabase Database (PostgreSQL)** - Relational database w/ RLS policies
 - **Supabase Storage** - Cloud storage for Profile Pictures 
 
+**Testing**
+- **Jest** (`jest-expo` preset) - Unit tests
+- **React Native Testing Library** - Component tests
+
 ## 🏗️ File structure
 ```
 hair-diary/
@@ -55,6 +59,8 @@ hair-diary/
 ├── utils/
 │   ├── dateFormat.ts         # Date formatting utilities
 │   └── todayISO.ts           # Date helper functions
+├── jest.config.js            # Jest config (jest-expo preset)
+├── test/                     # Jest support: time zone environment, setTimeZone() type, icon stub
 └── assets/
     └── fonts/                # Poppins font family
 ```
@@ -205,6 +211,19 @@ eas env:set --environment development --name EXPO_PUBLIC_SUPABASE_URL --value ht
 ```
 Repeat for `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Create both variables in the `preview` and `production` environments with the prod values printed by `infra/azure/deploy.sh`. Check the result with `eas env:list --environment development`. To pull an environment's values into a local file, run `eas env:pull --environment development` (it writes `.env.local`, which is git-ignored).
 
+## 🧪 Testing
+
+Unit and component tests use [Jest](https://jestjs.io/) with the [`jest-expo`](https://docs.expo.dev/develop/unit-testing/) preset and [React Native Testing Library](https://callstack.github.io/react-native-testing-library/). They need no `.env` or running Supabase stack.
+```bash
+npm test
+```
+```bash
+npm run test:watch
+```
+- Tests sit next to the code in `__tests__/` folders, named `<File>.test.ts(x)`.
+- `lib/` tests call `jest.mock("../supabase")`, which swaps in the manual mock in `lib/__mocks__/supabase.ts`, so no real client is created. Read its helpers (`mockUser`, `createQueryBuilder`) with `jest.requireMock("../supabase")` to get the same instance the code under test uses.
+- Icons from `@expo/vector-icons` render as a stub with the test ID `icon-<name>` (see `jest.config.js`).
+- Every test starts in the `America/Los_Angeles` time zone (`test/timeZoneEnvironment.js`), so date tests don't depend on your machine. Call `setTimeZone("Pacific/Auckland")` to test another zone; setting `process.env.TZ` inside a test has no effect.
 
 ## 📸 Preview
 <p align=center>
@@ -240,7 +259,7 @@ Work is planned in 2-week sprints on the [Hair Diary Roadmap](https://github.com
 - [x] **Lint & format** - ESLint + Prettier
 - [ ] **Refactor & types** - Typed navigation (no `any`), consistent error handling w/ user feedback
 - [ ] **Backend setup** - Supabase CLI w/ migrations & RLS policies in repo, local dev + seed data, generated DB types, env & secrets config
-- [ ] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
+- [x] **Tests** - Jest + React Native Testing Library for components and `lib/` functions
 - [ ] **CI pipeline** - GitHub Actions running typecheck, lint, and tests on PRs
 - [x] **Claude Code setup** - `CLAUDE.md` and project skills for AI-assisted development
 - [ ] **Edit & delete entries**
