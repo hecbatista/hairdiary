@@ -1,16 +1,21 @@
+import { Tables, TablesInsert } from "./database.types";
 import { supabase } from "./supabase";
 import { Entry, EntryType } from "../type";
 
 /**
- * Database representation of a entry.
- * Maps to Entries table in Supabase.
+ * Maps a row of the Entries table to the app's `Entry` type.
+ *
+ * @param {Tables<"Entries">} row the database row.
+ * @returns {Entry} the entry in app (camelCase) shape.
  */
-export interface DatabaseEntry {
-    entry_id: string;
-    user_id: string;
-    date: string;
-    entry_type: EntryType;
-    notes: string | null;
+function toEntry(row: Tables<"Entries">): Entry {
+    return {
+        id: row.entry_id,
+        date: row.date,
+        // The column is text with a check constraint listing ENTRY_TYPES.
+        type: row.entry_type as EntryType,
+        notes: row.notes || "",
+    };
 }
 
 /**
@@ -37,12 +42,7 @@ export async function fetchUserEntries(): Promise<Entry[]> {
 
         if (error) throw error;
 
-        return (data || []).map((dbEntry) => ({
-            id: dbEntry.entry_id,
-            date: dbEntry.date,
-            type: dbEntry.entry_type as EntryType,
-            notes: dbEntry.notes || "",
-        }));
+        return (data || []).map(toEntry);
     } catch (error) {
         throw error;
     }
@@ -65,7 +65,7 @@ export async function createEntry(entry: Omit<Entry, "id">): Promise<Entry> {
             throw new Error("No user logged in!");
         }
 
-        const dbEntry = {
+        const dbEntry: TablesInsert<"Entries"> = {
             user_id: user.id,
             date: entry.date,
             entry_type: entry.type,
@@ -76,12 +76,7 @@ export async function createEntry(entry: Omit<Entry, "id">): Promise<Entry> {
 
         if (error) throw error;
 
-        return {
-            id: data.entry_id,
-            date: data.date,
-            type: data.entry_type as EntryType,
-            notes: data.notes || "",
-        };
+        return toEntry(data);
     } catch (error) {
         throw error;
     }
