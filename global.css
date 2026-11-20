@@ -1,0 +1,138 @@
+/*
+ * Hair Diary design tokens (gluestack-ui v5 on NativeWind v5 / Tailwind CSS v4).
+ *
+ * This file is the source of truth for the theme. Tailwind v4 is CSS-first, so there is no
+ * tailwind.config.js: tokens live here and become utilities (bg-primary, text-body,
+ * font-poppins-semibold, rounded-control, ...).
+ *
+ * colors.ts mirrors the color tokens as hex values for libraries that can't take a className
+ * (react-native-calendars, expo-linear-gradient). colors.test.ts fails if the two drift, so
+ * change a color here and in colors.ts together.
+ *
+ * Light only for now: dark values (`@media (prefers-color-scheme: dark)`) land with #52.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
+
+/* Semantic colors as "R G B" triplets, so utilities support alpha (bg-primary/50). */
+@layer theme {
+    :root {
+        /* Screen background, bottom of the header gradient (#EAD9D1) */
+        --background: 234 217 209;
+        --foreground: 0 0 0;
+
+        /* Raised surfaces */
+        --card: 247 241 238;
+        --card-foreground: 0 0 0;
+        /* White fields, entry cards and menus on top of the background */
+        --surface: 255 255 255;
+        --surface-foreground: 0 0 0;
+        --popover: 255 255 255;
+        --popover-foreground: 0 0 0;
+
+        /* Primary actions: the Save / Log in button (#1E1E1E) */
+        --primary: 30 30 30;
+        --primary-foreground: 255 255 255;
+        /* Softer dark for small controls on primary, e.g. the avatar edit badge (#2A2A2A) */
+        --primary-muted: 42 42 42;
+
+        /* Brand: form panel, calendar, top of the header gradient (#AD948B) */
+        --secondary: 173 148 139;
+        --secondary-foreground: 0 0 0;
+        /* Darker brand shade: the selected calendar day (#61524A) */
+        --secondary-strong: 97 82 74;
+        --secondary-strong-foreground: 255 255 255;
+
+        /* Highlights (#D7B5A6) */
+        --accent: 215 181 166;
+        --accent-foreground: 0 0 0;
+        /* Calendar tint from colors.ts (#BFA69A) */
+        --calendar: 191 166 154;
+
+        /* Placeholders (avatar, #D9D9D9) and secondary text (#6E6E6E) */
+        --muted: 217 217 217;
+        --muted-foreground: 110 110 110;
+
+        --border: 240 240 240;
+        --input: 240 240 240;
+        /* Focus rings and the selected-option checkmark (iOS blue, #007AFF) */
+        --ring: 0 122 255;
+        /* Errors and destructive actions (gluestack default until the app needs its own) */
+        --destructive: 231 0 11;
+        --destructive-foreground: 255 255 255;
+        /* Modal scrim; use with alpha: bg-backdrop/50 */
+        --backdrop: 0 0 0;
+    }
+}
+
+@theme inline {
+    --color-background: rgb(var(--background));
+    --color-foreground: rgb(var(--foreground));
+    --color-card: rgb(var(--card));
+    --color-card-foreground: rgb(var(--card-foreground));
+    --color-surface: rgb(var(--surface));
+    --color-surface-foreground: rgb(var(--surface-foreground));
+    --color-popover: rgb(var(--popover));
+    --color-popover-foreground: rgb(var(--popover-foreground));
+    --color-primary: rgb(var(--primary));
+    --color-primary-foreground: rgb(var(--primary-foreground));
+    --color-primary-muted: rgb(var(--primary-muted));
+    --color-secondary: rgb(var(--secondary));
+    --color-secondary-foreground: rgb(var(--secondary-foreground));
+    --color-secondary-strong: rgb(var(--secondary-strong));
+    --color-secondary-strong-foreground: rgb(var(--secondary-strong-foreground));
+    --color-accent: rgb(var(--accent));
+    --color-accent-foreground: rgb(var(--accent-foreground));
+    --color-calendar: rgb(var(--calendar));
+    --color-muted: rgb(var(--muted));
+    --color-muted-foreground: rgb(var(--muted-foreground));
+    --color-border: rgb(var(--border));
+    --color-input: rgb(var(--input));
+    --color-ring: rgb(var(--ring));
+    --color-destructive: rgb(var(--destructive));
+    --color-destructive-foreground: rgb(var(--destructive-foreground));
+    --color-backdrop: rgb(var(--backdrop));
+}
+
+@theme {
+    /*
+     * Fonts. React Native picks a face by family name, not by font-weight, so each Poppins
+     * weight is its own family (loaded in App.tsx). Use font-poppins-semibold, not font-semibold.
+     */
+    --font-sans: "Poppins-Regular";
+    --font-poppins: "Poppins-Regular";
+    --font-poppins-medium: "Poppins-Medium";
+    --font-poppins-semibold: "Poppins-SemiBold";
+    --font-poppins-bold: "Poppins-Bold";
+
+    /*
+     * Type scale: the sizes the app uses today, named after Apple's text styles. Line heights are
+     * unitless ratios (28px on a 20px title is calc(28 / 20)), as in Tailwind's defaults:
+     * react-native-css treats a px value here as a multiplier, so 28px would render as 560.
+     */
+    --text-footnote: 14px;
+    --text-footnote--line-height: calc(20 / 14);
+    --text-body: 16px;
+    --text-body--line-height: calc(24 / 16);
+    --text-headline: 18px;
+    --text-headline--line-height: calc(26 / 18);
+    --text-title-3: 20px;
+    --text-title-3--line-height: calc(28 / 20);
+    --text-title-2: 24px;
+    --text-title-2--line-height: calc(32 / 24);
+    --text-title-1: 28px;
+    --text-title-1--line-height: calc(36 / 28);
+    --text-large-title: 32px;
+    --text-large-title--line-height: calc(40 / 32);
+    --text-display: 48px;
+    --text-display--line-height: calc(56 / 48);
+
+    /* Spacing: Tailwind's 4px scale (p-3 = 12px, p-4 = 16px, p-6 = 24px). */
+    --spacing: 4px;
+
+    /* Radius: fields, buttons, cards and menus; the form panel. Avatars use rounded-full. */
+    --radius-control: 12px;
+    --radius-panel: 16px;
+}

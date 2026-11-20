@@ -11,6 +11,8 @@ import ProfileScreen from "./screens/ProfileScreen";
 import { useEffect } from "react";
 import LoginScreen from "./screens/LoginScreen";
 import type { RootStackParamList } from "./navigation/types";
+import { GluestackUIProvider } from "./components/ui/gluestack-ui-provider";
+import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,14 +37,17 @@ export default function App() {
     }
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="AddEntry" component={AddEntryScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
+        // Light only until dark mode lands (#52); the provider sets the app's color scheme.
+        <GluestackUIProvider mode="light">
+            <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="AddEntry" component={AddEntryScreen} />
+                    <Stack.Screen name="Profile" component={ProfileScreen} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </GluestackUIProvider>
     );
 }
 
