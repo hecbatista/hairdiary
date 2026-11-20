@@ -60,7 +60,7 @@ export async function updateEntry(entry: Entry): Promise<Entry> {
 Rules:
 - Always scope by `user_id`, even though RLS also enforces it.
 - Map snake_case columns to camelCase app fields in both directions. If several functions repeat the same mapping, pull it into one helper (e.g. `toEntry(dbEntry)`).
-- Declare the row shape as an interface next to the functions (like `DatabaseEntry`) until generated types exist (#5). After that, use the generated `Database` types instead.
+- Use the generated types from `lib/database.types.ts` for row shapes (`Tables<"Entries">`, `TablesInsert<"Entries">`, `TablesUpdate<"Entries">`). Don't hand-write row interfaces.
 - Throw errors and let the screen handle them (show feedback, stop the loading state).
 - Storage uploads follow `uploadProfilePicture`: read the file with `fetch(uri).then(r => r.arrayBuffer())`, save it under a `{user_id}/` prefix, and set `contentType`.
 
@@ -68,7 +68,7 @@ Rules:
 
 If the function needs a new table, column or bucket:
 - **Before #4 (no `supabase/` folder):** write the SQL, including RLS policies, in the PR description so it can be applied in the Supabase dashboard. Tell the user it must be applied manually.
-- **After #4:** `supabase migration new <name>`, write the SQL (table/column changes **and** RLS policies) in the new migration, apply it locally, then regenerate types (`npm run gen:types` once #5 lands).
+- **After #4:** `supabase migration new <name>`, write the SQL (table/column changes **and** RLS policies) in the new migration, apply it locally (`npx supabase db reset`), then regenerate types with `npm run gen:types` and commit `lib/database.types.ts` with the migration.
 - New tables always get RLS enabled, with owner-only policies unless the feature is explicitly public (e.g. community posts).
 
 ## 4. Call it from the screen

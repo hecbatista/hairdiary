@@ -2,17 +2,6 @@ import { Profile } from "../type";
 import { supabase } from "./supabase";
 
 /**
- * Database representation of a user profile.
- * Maps to the Users table in Supabase.
- */
-export interface UserProfile {
-    user_id: string;
-    email: string;
-    hair_journey: string | null;
-    profile_picture: string | null;
-}
-
-/**
  * Fetches the current authenticated user's profile from the database.
  *
  * @returns {Promise<Profile | null>} The user's profile data, or null if no user is logged in.
@@ -39,7 +28,7 @@ export async function fetchUserProfile(): Promise<Profile | null> {
         return {
             name: user.email?.split("@")[0] || "",
             journey: data.hair_journey || "",
-            photoUri: data.profile_picture,
+            photoUri: data.profile_picture ?? undefined,
         };
     } catch (error) {
         return null;

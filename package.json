@@ -10,7 +10,8 @@
     "lint": "expo lint",
     "lint:fix": "expo lint --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "gen:types": "supabase gen types typescript --local --schema public > lib/database.types.ts.tmp && mv lib/database.types.ts.tmp lib/database.types.ts && prettier --write lib/database.types.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

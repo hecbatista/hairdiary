@@ -38,6 +38,7 @@ hair-diary/
 │   └── LoginScreen.tsx       # Authentication
 ├── lib/
 │   ├── supabase.ts           # Supabase client configuration
+│   ├── database.types.ts     # Generated DB types (npm run gen:types), don't edit
 │   ├── supabaseEntries.ts    # Entry operations
 │   └── supabaseProfile.ts    # Profile and storage operations
 ├── components/
@@ -170,7 +171,11 @@ npx supabase migration new <short_description>
 ```bash
 npx supabase db reset
 ```
-4. Commit the migration with the app code that uses it.
+4. Regenerate the TypeScript types in `lib/database.types.ts` from the local database (the Supabase client is typed with them, so `npx tsc --noEmit` catches code that no longer matches the schema):
+```bash
+npm run gen:types
+```
+5. Commit the migration, the regenerated types and the app code that uses them.
 
 Prod gets the same migrations with `infra/azure/push-migrations.sh` (add `--dry-run` to preview), which runs `npx supabase db push` through an SSH tunnel to the Azure VM. The seed file only runs locally.
 
