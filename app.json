@@ -9,8 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/AppIcon.icon",
-      "bundleIdentifier": "com.hbatista908.hair-diary"
+      "icon": "./assets/AppIcon.icon"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,11 +30,7 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 260,
           "resizeMode": "contain",
-          "backgroundColor": "#EAD9D1",
-          "dark": {
-            "image": "./assets/splash-icon-dark.png",
-            "backgroundColor": "#2B2320"
-          }
+          "backgroundColor": "#EAD9D1"
         }
       ]
     ],

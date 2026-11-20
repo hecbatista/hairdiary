@@ -4,6 +4,8 @@
  *
  * Usage: node assets/brand/build.mjs [--svg-only]
  *
+ * Every SVG and PNG it lists in OUTPUTS is generated: edit this file, not the outputs.
+ *
  * The strand is drawn from a centerline and a width profile, so its shape can be tuned by editing
  * the numbers below instead of hand-editing hundreds of path points.
  */
@@ -14,7 +16,9 @@ import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSETS = join(HERE, "..");
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+/** Chrome binary used to render PNGs. Set CHROME_PATH to override the default macOS location. */
+const CHROME =
+    process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
 export const PALETTE = {
     blush: "#EAD9D1",
@@ -124,7 +128,8 @@ const NOTCH_DEPTH = 26;
 function cubic([p0, p1, p2, p3], t) {
     const u = 1 - t;
     return [0, 1].map(
-        (i) => u * u * u * p0[i] + 3 * u * u * t * p1[i] + 3 * u * t * t * p2[i] + t * t * t * p3[i],
+        (i) =>
+            u * u * u * p0[i] + 3 * u * u * t * p1[i] + 3 * u * t * t * p2[i] + t * t * t * p3[i],
     );
 }
 
@@ -247,7 +252,8 @@ export function markSvg({ background, book, hair, ribbon, scale = 1 }) {
     if (book) {
         parts.push(
             `<g mask="url(#no-strand)" fill="${book}">`,
-            `<rect x="${COVER.x}" y="${COVER.y}" width="${COVER.width}" height="${COVER.height}" rx="${COVER.radius}" mask="url(#no-pages)"/>`,
+            `<rect x="${COVER.x}" y="${COVER.y}" width="${COVER.width}" height="${COVER.height}"` +
+                ` rx="${COVER.radius}" mask="url(#no-pages)"/>`,
             PAGES,
             `</g>`,
         );
@@ -257,7 +263,8 @@ export function markSvg({ background, book, hair, ribbon, scale = 1 }) {
 
     const t = (512 * (1 - scale)).toFixed(2);
     return [
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">`,
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"` +
+            ` width="1024" height="1024">`,
         `<defs>`,
         `<mask id="no-strand" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">`,
         `<rect width="1024" height="1024" fill="#fff"/>`,
@@ -289,7 +296,12 @@ const OUTPUTS = {
     "brand/icon-light.svg": { background: blush, book: cocoa, hair: cocoa, ribbon: rose },
     "brand/icon-dark.svg": { background: darkBackground, book: blush, hair: rose, ribbon: blush },
     // Approximation of the tinted appearance: iOS turns each layer into a shade of the tint.
-    "brand/icon-tinted.svg": { background: "#1C1C1E", book: "#E5E5EA", hair: "#E5E5EA", ribbon: "#8E8E93" },
+    "brand/icon-tinted.svg": {
+        background: "#1C1C1E",
+        book: "#E5E5EA",
+        hair: "#E5E5EA",
+        ribbon: "#8E8E93",
+    },
     // Icon Composer layers, recolored per appearance in AppIcon.icon/icon.json
     "AppIcon.icon/Assets/book.png": { background: null, book: cocoa, hair: null, ribbon: null },
     "AppIcon.icon/Assets/hair.png": { background: null, book: null, hair: cocoa, ribbon: null },
@@ -297,7 +309,8 @@ const OUTPUTS = {
     // App assets
     "icon.png": { background: blush, book: cocoa, hair: cocoa, ribbon: rose },
     "splash-icon.png": { background: null, book: cocoa, hair: cocoa, ribbon: rose },
-    "splash-icon-dark.png": { background: null, book: blush, hair: rose, ribbon: blush },
+    // Dark splash mark, not wired up yet: a dark splash needs userInterfaceStyle "automatic" (#52).
+    "brand/splash-icon-dark.png": { background: null, book: blush, hair: rose, ribbon: blush },
     // Android adaptive icons keep their content inside the central 66% safe zone.
     "adaptive-icon.png": { background: null, book: cocoa, hair: cocoa, ribbon: rose, scale: 0.72 },
     "favicon.png": { background: blush, book: cocoa, hair: cocoa, ribbon: rose, size: 48 },
@@ -309,17 +322,23 @@ function render(svgFile, pngFile, size) {
     const html = join(dirname(svgFile), ".render.html");
     writeFileSync(
         html,
-        `<html><body style="margin:0"><img src="${svgFile}" width="${size}" height="${size}" style="display:block"></body></html>`,
+        `<html><body style="margin:0">` +
+            `<img src="${svgFile}" width="${size}" height="${size}" style="display:block">` +
+            `</body></html>`,
     );
-    execFileSync(CHROME, [
-        "--headless",
-        "--disable-gpu",
-        "--hide-scrollbars",
-        "--default-background-color=00000000",
-        `--window-size=${size},${size}`,
-        `--screenshot=${pngFile}`,
-        `file://${html}`,
-    ], { stdio: "ignore" });
+    execFileSync(
+        CHROME,
+        [
+            "--headless",
+            "--disable-gpu",
+            "--hide-scrollbars",
+            "--default-background-color=00000000",
+            `--window-size=${size},${size}`,
+            `--screenshot=${pngFile}`,
+            `file://${html}`,
+        ],
+        { stdio: "ignore" },
+    );
     execFileSync("rm", [html]);
 }
 

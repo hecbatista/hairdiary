@@ -31,6 +31,8 @@ npm run gen:types                     # Regenerate lib/database.types.ts from th
 
 infra/azure/deploy.sh                 # Create/update the prod VM on Azure and (re)start Supabase on it
 infra/azure/push-migrations.sh        # Apply supabase/migrations/ to prod (--dry-run to preview)
+
+node assets/brand/build.mjs           # Regenerate the app icon/splash SVGs and PNGs (needs Chrome, CHROME_PATH)
 ```
 
 CI (`.github/workflows/ci.yml`, GitHub Actions) runs on every PR and every push to `main`: `npm ci`, then
@@ -57,6 +59,8 @@ supabase/            # Supabase CLI project: config.toml, migrations/, seed.sql
 infra/azure/         # Prod: self-hosted Supabase on an Azure VM (deploy, bootstrap, backup scripts)
 .github/workflows/   # CI (ci.yml): typecheck, lint, format check, tests on PRs and pushes to main
 storage/             # Legacy AsyncStorage profile cache, superseded by lib/supabaseProfile.ts
+assets/brand/        # App icon & splash source: build.mjs generates the SVGs, assets/*.png and the
+                     # AppIcon.icon layers (edit the script, not the outputs); prompts and previews
 ```
 
 **Navigation:** a single native stack in `App.tsx` with `headerShown: false`. Routes: `Login`, `Home`, `AddEntry` (param `date: "YYYY-MM-DD"`), `Profile`. Screens draw their own header with `HeaderGradient` + `ScreenHeader`. Routes and their params are declared in `RootStackParamList` (`navigation/types.ts`), which also types `useNavigation()` globally. Screens type their props as `RootStackScreenProps<"RouteName">`; components that receive `navigation` use `NavigationProp<RootStackParamList>`. A new route needs an entry in `RootStackParamList`.
