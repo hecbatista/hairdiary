@@ -19,7 +19,7 @@ module.exports = {
         // The "@/" alias from tsconfig.json, used by gluestack-ui components in components/ui/.
         "^@/(.*)$": "<rootDir>/$1",
         // Metro compiles global.css; Jest only needs the import to resolve. Tests that need real
-        // styles compile the CSS themselves (see components/ui/__tests__/nativewind.test.tsx).
+        // styles compile the CSS themselves (see components/ui/gluestack-ui-provider/__tests__/GluestackUIProvider.test.tsx).
         "\\.css$": "<rootDir>/test/styleMock.js",
         // The real icons load fonts through expo-font, which imports expo-asset. expo-asset is
         // only installed nested under expo/, so Jest can't resolve it. Icons are presentational,

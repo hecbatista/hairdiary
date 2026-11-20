@@ -51,7 +51,12 @@
         /* Calendar tint from colors.ts (#BFA69A) */
         --calendar: 191 166 154;
 
-        /* Placeholders (avatar, #D9D9D9) and secondary text (#6E6E6E) */
+        /*
+         * Placeholders (avatar, #D9D9D9) and secondary text (#6E6E6E). HomeScreen's two other
+         * grays have no token on purpose: the empty-state "grey" (#808080) and the avatar
+         * initial #666 both become muted-foreground when #51 migrates it, a deliberate small
+         * color change.
+         */
         --muted: 217 217 217;
         --muted-foreground: 110 110 110;
 

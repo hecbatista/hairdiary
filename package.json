@@ -71,9 +71,7 @@
   "private": true,
   "overrides": {
     "lightningcss": "1.30.1",
-    "react-native-css": {
-      "@expo/metro-config": "~54.0.13"
-    }
+    "@expo/metro-config": "~54.0.13"
   },
   "resolutions": {
     "lightningcss": "1.30.1"

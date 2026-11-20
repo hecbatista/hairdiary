@@ -18,6 +18,9 @@ export function GluestackUIProvider({
     style?: ViewProps["style"];
 }) {
     useEffect(() => {
+        // Known gap (generated code): React Native 0.81 accepts "light", "dark" or null, so
+        // mode="system" must map to null. Harmless while App.tsx passes "light"; dark mode (#52)
+        // has to fix it.
         Appearance.setColorScheme(mode as ColorSchemeName);
     }, [mode]);
 
